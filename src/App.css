@@ -36,14 +36,16 @@
 }
 
 .name {
+  font-family: 'Saans', sans-serif;
   font-size: 3rem;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
 .role {
+  font-family: 'SpaceGrotesk', sans-serif;
   font-size: 0.875rem;
   font-weight: 300;
   color: #666;
@@ -56,6 +58,7 @@
 }
 
 .nav-link {
+  font-family: 'SpaceGrotesk', sans-serif;
   font-size: 0.875rem;
   font-weight: 300;
   color: #000;
@@ -68,7 +71,7 @@
   color: #666;
 }
 
-/* Right Panel - Scrolling List */
+/* Scrolling List */
 .right-panel {
   flex: 1;
   margin-left: auto;
@@ -102,8 +105,9 @@
 }
 
 .project-item {
+  font-family: 'Saans', sans-serif;
   font-size: 4rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: #000;
