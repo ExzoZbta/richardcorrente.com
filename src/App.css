@@ -104,6 +104,11 @@
   transform-origin: right;
 }
 
+.nav-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
 /* Scrolling List */
 .right-panel {
   flex: 1;

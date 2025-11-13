@@ -1,56 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
 
-function App() {
+// Shared Layout Component
+function Layout({ children }: { children: React.ReactNode }) {
   const leftPanelRef = useRef<HTMLDivElement>(null);
-  const projectListRef = useRef<HTMLDivElement>(null);
   const nameSectionRef = useRef<HTMLDivElement>(null);
   const richardRef = useRef<HTMLHeadingElement>(null);
   const correnteRef = useRef<HTMLHeadingElement>(null);
   const developerRef = useRef<HTMLSpanElement>(null);
   const designerRef = useRef<HTMLSpanElement>(null);
-  const [bottomPadding, setBottomPadding] = useState(0);
   const [correnteLeft, setCorrenteLeft] = useState(0);
   const [developerLeft, setDeveloperLeft] = useState(0);
   const [developerTop, setDeveloperTop] = useState(0);
   const [designerLeft, setDesignerLeft] = useState(0);
   const [designerTop, setDesignerTop] = useState(0);
-
-  const projects = [
-    'saudade',
-    "'Mode 7' game engine",
-    'attack of the clones',
-    'webzine',
-    'tool for one',
-    'writings in the fog',
-    'fog animation',
-    'emotion synthesizer',
-  ];
+  const location = useLocation();
+  const prevLocationRef = useRef<string>(location.pathname);
 
   // Set CORRENTE position and wait for fonts
   useEffect(() => {
+    
     const initializeCorrentePosition = async () => {
       if (richardRef.current) {
-        // Wait for fonts to be ready
         if (document.fonts && document.fonts.ready) {
           await document.fonts.ready;
         }
-        
-        // Wait for layout to be ready
         await new Promise(resolve => setTimeout(resolve, 100));
-        
         const richardWidth = richardRef.current.offsetWidth;
         setCorrenteLeft(richardWidth);
       }
     };
-
     initializeCorrentePosition();
-  }, []);
+
+    prevLocationRef.current = location.pathname;
+  }, [location.pathname]);
 
   // Calculate role positions after CORRENTE is positioned
   useEffect(() => {
     if (correnteLeft === 0) return;
-
     const updatePositions = () => {
       if (
         richardRef.current && 
@@ -59,12 +47,10 @@ function App() {
         designerRef.current &&
         nameSectionRef.current
       ) {
-        // Get bounding boxes relative to name-section
         const nameSectionRect = nameSectionRef.current.getBoundingClientRect();
         const richardRect = richardRef.current.getBoundingClientRect();
         const correnteRect = correnteRef.current.getBoundingClientRect();
         
-        // Calculate centers
         const richardCenterX = richardRect.left - nameSectionRect.left + richardRect.width / 2;
         const richardCenterY = richardRect.top - nameSectionRect.top + richardRect.height / 2;
         
@@ -80,8 +66,6 @@ function App() {
         setDesignerTop(richardCenterY);
       }
     };
-
-    // ensure DOM updated
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         updatePositions();
@@ -89,17 +73,8 @@ function App() {
     });
   }, [correnteLeft]);
 
-  // padding and resize handling
+  // Update positions on resize
   useEffect(() => {
-    const updatePadding = () => {
-      if (leftPanelRef.current && projectListRef.current) {
-        const leftPanelHeight = leftPanelRef.current.offsetHeight;
-        const viewportHeight = window.innerHeight;
-        const padding = viewportHeight - leftPanelHeight;
-        setBottomPadding(padding);
-      }
-    };
-
     const updatePositions = () => {
       if (
         richardRef.current && 
@@ -130,24 +105,25 @@ function App() {
     };
 
     const handleResize = () => {
-      updatePadding();
       updatePositions();
     };
 
-    updatePadding();
-    
     window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, [correnteLeft]);
+
+  const isActive = (path: string) => {
+    //  show "work" active if coming from about or contact
+    if (path === '/') {
+      const cameFromAboutOrContact = prevLocationRef.current === '/about' || prevLocationRef.current === '/contact';
+      return location.pathname === '/' && cameFromAboutOrContact;
+    }
+    return location.pathname === path;
+  };
 
   return (
     <div className="App">
       <div className="container">
-        
-        {/* Name and Navigation */}
         <div ref={leftPanelRef} className="left-panel">
           <div ref={nameSectionRef} className="name-section">
             <div className="name-row first-row">
@@ -182,30 +158,111 @@ function App() {
             </span>
           </div>
           <nav className="navigation">
-            <a href="#work" className="nav-link">work</a>
-            <a href="#about" className="nav-link">about</a>
-            <a href="#contact" className="nav-link">contact</a>
+            <Link 
+              to="/" 
+              className={`nav-link ${isActive('/') ? 'active' : ''}`}
+            >
+              work
+            </Link>
+            <Link 
+              to="/about" 
+              className={`nav-link ${isActive('/about') ? 'active' : ''}`}
+            >
+              about
+            </Link>
+            <Link 
+              to="/contact" 
+              className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
+            >
+              contact
+            </Link>
           </nav>
         </div>
+        {children}
+      </div>
+    </div>
+  );
+}
 
-        {/* Scrolling List */}
-        <div className="right-panel">
-          <div className="scroll-container">
-            <div 
-              ref={projectListRef}
-              className="project-list"
-              style={{ paddingBottom: `${bottomPadding}px` }}
-            >
-              {projects.map((project, index) => (
-                <div key={index} className="project-item">
-                  {project}
-                </div>
-              ))}
+// Home Page Component
+function Home() {
+  const projectListRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const [bottomPadding, setBottomPadding] = useState(0);
+
+  const projects = [
+    'saudade',
+    "'Mode 7' game engine",
+    'attack of the clones',
+    'webzine',
+    'tool for one',
+    'writings in the fog',
+    'fog animation',
+    'emotion synthesizer',
+  ];
+
+  useEffect(() => {
+    const updatePadding = () => {
+      if (leftPanelRef.current && projectListRef.current) {
+        const leftPanelHeight = leftPanelRef.current.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const padding = viewportHeight - leftPanelHeight;
+        setBottomPadding(padding);
+      }
+    };
+
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
+
+  return (
+    <div className="right-panel">
+      <div className="scroll-container">
+        <div 
+          ref={projectListRef}
+          className="project-list"
+          style={{ paddingBottom: `${bottomPadding}px` }}
+        >
+          {projects.map((project, index) => (
+            <div key={index} className="project-item">
+              {project}
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
+  );
+}
+
+// About Page Component
+function About() {
+  return (
+    <div className="right-panel">
+      {/* content */}
+    </div>
+  );
+}
+
+// Contact Page Component
+function Contact() {
+  return (
+    <div className="right-panel">
+      {/* content */}
+    </div>
+  );
+}
+
+// Main App Component
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+      </Routes>
+    </Router>
   );
 }
 
