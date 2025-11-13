@@ -101,7 +101,8 @@
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 156px;
+  align-items: flex-end;
 }
 
 .project-item {
@@ -114,13 +115,14 @@
   text-transform: lowercase;
   cursor: pointer;
   transition: color 0.2s ease;
+  text-align: right;
+  width: 100%;
 }
 
 .project-item:hover {
   color: #666;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .name {
     font-size: 2rem;
@@ -130,6 +132,10 @@
     font-size: 2.5rem;
   }
 
+  .project-list {
+    gap: 80px;
+  }
+
   .left-panel {
     padding: 1.5rem;
   }
@@ -137,5 +143,21 @@
   .right-panel {
     padding-right: 1.5rem;
     padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-list {
+    gap: 60px; 
+  }
+
+  .project-item {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .project-list {
+    gap: 156px;
   }
 }
