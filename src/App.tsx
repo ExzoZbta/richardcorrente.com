@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
+import WaterSphereScene from './WaterSphereScene';
+
 
 // Shared Layout Component
 function Layout({ children }: { children: React.ReactNode }) {
@@ -123,6 +125,9 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="App">
+      <div className="water-sphere-container">
+        <WaterSphereScene />
+      </div>
       <div className="container">
         <div ref={leftPanelRef} className="left-panel">
           <div ref={nameSectionRef} className="name-section">
