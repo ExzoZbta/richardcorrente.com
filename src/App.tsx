@@ -12,6 +12,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const correnteRef = useRef<HTMLHeadingElement>(null);
   const developerRef = useRef<HTMLSpanElement>(null);
   const designerRef = useRef<HTMLSpanElement>(null);
+  const waterSphereRef = useRef<HTMLDivElement>(null);
   const [correnteLeft, setCorrenteLeft] = useState(0);
   const [developerLeft, setDeveloperLeft] = useState(0);
   const [developerTop, setDeveloperTop] = useState(0);
