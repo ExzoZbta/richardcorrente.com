@@ -1,79 +1,53 @@
 import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Mesh } from 'three';
 import * as THREE from 'three';
+import waterSphereVertexShader from './shaders/waterSphere.vert.glsl';
+import waterSphereFragmentShader from './shaders/waterSphere.frag.glsl';
 
-function WaterSphere() {
+interface WaterSphereProps {
+  envMap?: THREE.WebGLRenderTarget | null;
+}
+
+function WaterSphere({ envMap }: WaterSphereProps) {
   const meshRef = useRef<Mesh>(null);
   const timeRef = useRef(0);
+  const { size } = useThree();
 
-  // Create shader material for water effect
+  // Create shader material for glass effect with refraction
   const material = useMemo(() => {
     return new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        uRefractionRatio: { value: 0.98 },
-        uFresnelBias: { value: 0.1 },
-        uFresnelScale: { value: 1.0 },
-        uFresnelPower: { value: 2.0 },
+        envMap: { value: null },
+        resolution: { value: new THREE.Vector2(size.width, size.height) },
+        ior: { value: 1.33 }, // Index of refraction for water
       },
-      vertexShader: `
-        uniform float time;
-        varying vec3 vWorldPosition;
-        varying vec3 vNormal;
-        varying vec2 vUv;
-        
-        void main() {
-          vUv = uv;
-          vNormal = normalize(normalMatrix * normal);
-          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-          vWorldPosition = worldPosition.xyz;
-          
-          // Create rippling effect with noise
-          vec3 pos = position;
-          float noise = sin(pos.x * 2.0 + time) * sin(pos.y * 3.0 + time * 1.5) * sin(pos.z * 2.5 + time * 0.8);
-          noise += sin(pos.x * 4.0 + time * 1.2) * sin(pos.y * 5.0 + time * 2.0) * sin(pos.z * 3.5 + time * 1.5) * 0.5;
-          pos += normal * noise * 0.05;
-          
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uRefractionRatio;
-        uniform float uFresnelBias;
-        uniform float uFresnelScale;
-        uniform float uFresnelPower;
-        varying vec3 vWorldPosition;
-        varying vec3 vNormal;
-        varying vec2 vUv;
-        
-        void main() {
-          vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
-          float fresnel = uFresnelBias + uFresnelScale * pow(1.0 - dot(viewDirection, vNormal), uFresnelPower);
-          
-          // Water-like color with transparency
-          vec3 waterColor = vec3(0.5, 0.7, 0.9);
-          float alpha = 0.3 + fresnel * 0.4;
-          
-          gl_FragColor = vec4(waterColor, alpha);
-        }
-      `,
+      vertexShader: waterSphereVertexShader,
+      fragmentShader: waterSphereFragmentShader,
       transparent: true,
       side: THREE.DoubleSide,
     });
-  }, []);
+  }, [size.width, size.height]);
 
-  // Animate the rippling
+  // Update uniforms
   useFrame((state, delta) => {
     if (meshRef.current && material) {
       timeRef.current += delta;
       material.uniforms.time.value = timeRef.current;
+      
+      if (envMap) {
+        material.uniforms.envMap.value = envMap.texture;
+      }
+      
+      // Update resolution on resize
+      material.uniforms.resolution.value.set(size.width, size.height);
     }
   });
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[2.0, 64, 64]} />
+      <sphereGeometry args={[1.5, 64, 64]} />
       <primitive object={material} attach="material" />
     </mesh>
   );
