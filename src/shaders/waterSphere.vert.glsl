@@ -135,4 +135,3 @@ void main() {
   vClipPosition = clipPosition;
   vRippleAmount = displacement;
 }
-
