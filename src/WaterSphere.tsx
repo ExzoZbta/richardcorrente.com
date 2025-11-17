@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Mesh } from 'three';
 import * as THREE from 'three';
@@ -7,12 +7,28 @@ import waterSphereFragmentShader from './shaders/waterSphere.frag.glsl';
 
 interface WaterSphereProps {
   envMap?: THREE.WebGLRenderTarget | null;
+  lightPosition?: THREE.Vector3;
 }
 
-function WaterSphere({ envMap }: WaterSphereProps) {
+function WaterSphere({ envMap, lightPosition }: WaterSphereProps) {
   const meshRef = useRef<Mesh>(null);
   const timeRef = useRef(0);
-  const { size } = useThree();
+  const { size, camera } = useThree();
+  const defaultLightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
+  const effectiveLightPosition = lightPosition ?? defaultLightPosition;
+  const tintColor = useMemo(() => new THREE.Color(0x4f6477), []);
+
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+
+    mesh.layers.set(1);
+    camera.layers.enable(1);
+
+    return () => {
+      mesh.layers.set(0);
+    };
+  }, [camera]);
 
   // Create shader material for glass effect with refraction
   const material = useMemo(() => {
@@ -20,15 +36,26 @@ function WaterSphere({ envMap }: WaterSphereProps) {
       uniforms: {
         time: { value: 0 },
         envMap: { value: null },
+        hasEnvMap: { value: 0.0 },
         resolution: { value: new THREE.Vector2(size.width, size.height) },
         ior: { value: 1.33 }, // Index of refraction for water
+        lightPosition: { value: effectiveLightPosition.clone() },
+        tintColor: { value: tintColor.clone() },
+        refractionStrength: { value: 0.18 },
+        reflectionStrength: { value: 0.08 },
+        opacity: { value: 0.6 },
+        fresnelPower: { value: 3.0 },
+        distortionAmplitude: { value: 0.25 },
+        noiseScale: { value: 0.6 },
+        rippleSpeed: { value: 0.35 },
       },
       vertexShader: waterSphereVertexShader,
       fragmentShader: waterSphereFragmentShader,
       transparent: true,
       side: THREE.DoubleSide,
+      depthWrite: false,
     });
-  }, [size.width, size.height]);
+  }, [size.width, size.height, effectiveLightPosition, tintColor]);
 
   // Update uniforms
   useFrame((state, delta) => {
@@ -38,16 +65,21 @@ function WaterSphere({ envMap }: WaterSphereProps) {
       
       if (envMap) {
         material.uniforms.envMap.value = envMap.texture;
+        material.uniforms.hasEnvMap.value = 1.0;  // Set to 1.0 when envMap is available
+      } else {
+        material.uniforms.envMap.value = null;
+        material.uniforms.hasEnvMap.value = 0.0;  // Set to 0.0 when envMap is not available
       }
       
       // Update resolution on resize
       material.uniforms.resolution.value.set(size.width, size.height);
+      material.uniforms.lightPosition.value.copy(effectiveLightPosition);
     }
   });
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1.5, 64, 64]} />
+      <sphereGeometry args={[1.5, 128, 128]} />
       <primitive object={material} attach="material" />
     </mesh>
   );

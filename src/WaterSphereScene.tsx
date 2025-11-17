@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import WaterSphere from './WaterSphere';
@@ -19,16 +19,23 @@ function BackgroundCapture({ onRenderTargetReady }: { onRenderTargetReady: (rt: 
   }, [size.width, size.height, onRenderTargetReady]);
 
   useFrame(() => {
-    if (renderTargetRef.current) {
-      // Render scene without the water sphere to the render target
-      const originalAutoClear = gl.autoClear;
-      gl.autoClear = false;
-      gl.setRenderTarget(renderTargetRef.current);
-      gl.clear();
-      gl.render(scene, camera);
-      gl.setRenderTarget(null);
-      gl.autoClear = originalAutoClear;
-    }
+    const renderTarget = renderTargetRef.current;
+    if (!renderTarget) return;
+
+    const previousRenderTarget = gl.getRenderTarget();
+    const previousAutoClear = gl.autoClear;
+    const previousMask = camera.layers.mask;
+
+    gl.autoClear = true;
+    camera.layers.set(0);
+
+    gl.setRenderTarget(renderTarget);
+    gl.clear();
+    gl.render(scene, camera);
+
+    gl.setRenderTarget(previousRenderTarget);
+    gl.autoClear = previousAutoClear;
+    camera.layers.mask = previousMask;
   });
 
   return null;
@@ -36,6 +43,7 @@ function BackgroundCapture({ onRenderTargetReady }: { onRenderTargetReady: (rt: 
 
 function WaterSphereScene() {
   const envMapRef = useRef<THREE.WebGLRenderTarget | null>(null);
+  const lightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
 
   return (
     <Canvas
@@ -47,7 +55,7 @@ function WaterSphereScene() {
       <directionalLight position={[5, 5, 5]} intensity={1} />
       <pointLight position={[-5, -5, -5]} intensity={0.5} />
       <BackgroundCapture onRenderTargetReady={(rt) => { envMapRef.current = rt; }} />
-      <WaterSphere envMap={envMapRef.current} />
+      <WaterSphere envMap={envMapRef.current} lightPosition={lightPosition} />
     </Canvas>
   );
 }
