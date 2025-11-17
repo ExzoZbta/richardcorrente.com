@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import WaterSphere from './WaterSphere';
 
 function BackgroundCapture({ onRenderTargetReady }: { onRenderTargetReady: (rt: THREE.WebGLRenderTarget) => void }) {
@@ -44,6 +45,41 @@ function BackgroundCapture({ onRenderTargetReady }: { onRenderTargetReady: (rt: 
 function WaterSphereScene() {
   const envMapRef = useRef<THREE.WebGLRenderTarget | null>(null);
   const lightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
+  const [hdrEnvMap, setHdrEnvMap] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    let disposed = false;
+    const loader = new RGBELoader();
+    loader.setDataType(THREE.FloatType);
+    loader.setCrossOrigin('anonymous');
+    loader.load(
+      // 'https://threejs.org/examples/textures/equirectangular/venice_sunset_1k.hdr',
+      '/hdr/qwantani_puresky_1k.hdr',
+      (texture) => {
+        if (disposed) {
+          texture.dispose();
+          return;
+        }
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearFilter;
+        texture.needsUpdate = true;
+        setHdrEnvMap(texture);
+      },
+      undefined,
+      (error) => {
+        console.error('Failed to load HDR environment map', error);
+      }
+    );
+
+    return () => {
+      disposed = true;
+      setHdrEnvMap((prev) => {
+        prev?.dispose();
+        return null;
+      });
+    };
+  }, []);
 
   return (
     <Canvas
@@ -55,7 +91,7 @@ function WaterSphereScene() {
       <directionalLight position={[5, 5, 5]} intensity={1} />
       <pointLight position={[-5, -5, -5]} intensity={0.5} />
       <BackgroundCapture onRenderTargetReady={(rt) => { envMapRef.current = rt; }} />
-      <WaterSphere envMap={envMapRef.current} lightPosition={lightPosition} />
+      <WaterSphere envMap={envMapRef.current} hdrEnvMap={hdrEnvMap} lightPosition={lightPosition} />
     </Canvas>
   );
 }
