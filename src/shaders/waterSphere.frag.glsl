@@ -6,6 +6,7 @@ uniform vec2 resolution;
 uniform float ior;
 uniform vec3 lightPosition;
 uniform vec3 tintColor;
+uniform float tintIntensity;
 uniform float refractionStrength;
 uniform float reflectionStrength;
 uniform float opacity;
@@ -68,6 +69,8 @@ void main() {
   vec3 finalColor = combinedEnv + lighting * 0.6;
   float finalAlpha = clamp(opacity * (0.4 + fresnel * 0.6), 0.0, 1.0);
 
-  gl_FragColor = vec4(finalColor, finalAlpha);
+  // Bias the final color
+  vec3 colorized = mix(finalColor, tintColor, clamp(tintIntensity, 0.0, 1.0));
+  gl_FragColor = vec4(colorized, finalAlpha);
 }
 

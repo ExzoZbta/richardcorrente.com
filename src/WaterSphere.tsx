@@ -16,7 +16,7 @@ function WaterSphere({ envMap, lightPosition }: WaterSphereProps) {
   const { size, camera } = useThree();
   const defaultLightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
   const effectiveLightPosition = lightPosition ?? defaultLightPosition;
-  const tintColor = useMemo(() => new THREE.Color(0x4f6477), []);
+  const tintColor = useMemo(() => new THREE.Color(0x2f7dff), []);
 
   useEffect(() => {
     const mesh = meshRef.current;
@@ -41,13 +41,14 @@ function WaterSphere({ envMap, lightPosition }: WaterSphereProps) {
         ior: { value: 1.33 }, // Index of refraction for water
         lightPosition: { value: effectiveLightPosition.clone() },
         tintColor: { value: tintColor.clone() },
+        tintIntensity: { value: 0.75 },
         refractionStrength: { value: 0.18 },
-        reflectionStrength: { value: 0.08 },
-        opacity: { value: 0.6 },
+        reflectionStrength: { value: 0.04 },
+        opacity: { value: 0.2 },
         fresnelPower: { value: 3.0 },
         distortionAmplitude: { value: 0.25 },
         noiseScale: { value: 0.6 },
-        rippleSpeed: { value: 0.35 },
+        rippleSpeed: { value: 0.2 },
       },
       vertexShader: waterSphereVertexShader,
       fragmentShader: waterSphereFragmentShader,
