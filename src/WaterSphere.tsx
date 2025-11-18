@@ -17,8 +17,8 @@ function WaterSphere({ envMap, hdrEnvMap, lightPosition }: WaterSphereProps) {
   const { size, camera } = useThree();
   const defaultLightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
   const effectiveLightPosition = lightPosition ?? defaultLightPosition;
-  const tintColor = useMemo(() => new THREE.Color('rgb(198, 207, 224)'), []);
-  const surfaceColor = useMemo(() => new THREE.Color('rgb(14, 78, 239)'), []);
+  const tintColor = useMemo(() => new THREE.Color('rgb(162, 208, 242)'), []);
+  const surfaceColor = useMemo(() => new THREE.Color('rgb(212, 241, 249)'), []);
   const deepColor = useMemo(() => new THREE.Color('rgb(10, 13, 80)'), []);
   const rimColor = useMemo(() => new THREE.Color('rgb(235, 230, 230)'), []);
 
@@ -47,22 +47,23 @@ function WaterSphere({ envMap, hdrEnvMap, lightPosition }: WaterSphereProps) {
         ior: { value: 1.33 }, // Index of refraction for water
         lightPosition: { value: effectiveLightPosition.clone() },
         tintColor: { value: tintColor.clone() },
-        tintIntensity: { value: .65},
+        tintIntensity: { value: 0.4 },
         surfaceColor: { value: surfaceColor.clone() },
-        // deepColor: { value: deepColor.clone() },
+        deepColor: { value: deepColor.clone() },
         rimColor: { value: rimColor.clone() },
-        rimIntensity: { value: 0.55 },
+        rimIntensity: { value: 1.0 },
         surfaceMix: { value: 0.55 },
-        absorptionStrength: { value: 1.2 },
+        absorptionStrength: { value: 0.5 },
         refractionStrength: { value: 0.2 },
         reflectionStrength: { value: 0.06 },
         iblMix: { value: 0.65 },
-        hdrIntensity: { value: 20.0 },
-        opacity: { value: 0.6 },
+        hdrIntensity: { value: 70.0 },
+        hdrViewFade: { value: 0.0 },
+        opacity: { value: 0.4 },
         fresnelPower: { value: 3.0 },
         distortionAmplitude: { value: 0.3 },
-        noiseScale: { value: 0.5 },
-        rippleSpeed: { value: 0.22 },
+        noiseScale: { value: 0.4 },
+        rippleSpeed: { value: 0.2 },
       },
       vertexShader: waterSphereVertexShader,
       fragmentShader: waterSphereFragmentShader,

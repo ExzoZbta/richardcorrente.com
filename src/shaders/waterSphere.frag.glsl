@@ -21,6 +21,7 @@ uniform float opacity;
 uniform float fresnelPower;
 uniform float iblMix;
 uniform float hdrIntensity;
+uniform float hdrViewFade;
 
 varying vec3 vWorldPosition;
 varying vec3 vWorldNormal;
@@ -30,17 +31,26 @@ varying float vRippleAmount;
 
 const float PI = 3.141592653589793;
 
+vec3 sampleHdrEnv(vec3 dir);
+
 vec3 fallbackBackground(vec2 uv) {
   vec3 top = vec3(0.12, 0.16, 0.22);
   vec3 bottom = vec3(0.02, 0.03, 0.05);
   return mix(bottom, top, clamp(uv.y, 0.0, 1.0));
 }
 
-vec3 sampleEnv(vec2 uv) {
-  vec2 safeUv = clamp(uv, vec2(0.001), vec2(0.999));
+vec3 sampleEnv(vec2 uv, vec3 reflectionDir) {
   if (hasEnvMap < 0.5) {
+    vec2 safeUv = clamp(uv, vec2(0.001), vec2(0.999));
     return fallbackBackground(safeUv);
   }
+
+  bool outOfBounds = uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0;
+  if (outOfBounds) {
+    return sampleHdrEnv(reflectionDir);
+  }
+
+  vec2 safeUv = clamp(uv, vec2(0.001), vec2(0.999));
   return texture2D(envMap, safeUv).rgb;
 }
 
@@ -82,17 +92,17 @@ void main() {
   vec2 refractionUV = screenUV + refractedOffset * refractionStrength;
   vec2 reflectionUV = screenUV + reflectedOffset * reflectionStrength;
 
-  vec3 refractedColor = sampleEnv(refractionUV);
-  vec3 screenReflection = sampleEnv(reflectionUV);
+  vec3 refractedColor = sampleEnv(refractionUV, reflectionDir);
+  vec3 screenReflection = sampleEnv(reflectionUV, reflectionDir);
   vec3 hdrReflection = sampleHdrEnv(reflectionDir) * hdrIntensity;
-  vec3 reflectionColor = mix(screenReflection, hdrReflection, clamp(iblMix, 0.0, 1.0));
 
   vec3 tintedRefraction = mix(refractedColor, tintColor, 0.5);
-  float fresnelDot = max(dot(normal, viewDir), 0.0);
-  float fresnel = pow(1.0 - fresnelDot, fresnelPower);
+  float cosTheta = clamp(abs(dot(normal, viewDir)), 0.0, 1.0);
+  float viewAlignment = cosTheta;
+  float hdrContribution = clamp(iblMix * pow(1.0 - viewAlignment, hdrViewFade), 0.0, 1.0);
+  vec3 reflectionColor = mix(screenReflection, hdrReflection, hdrContribution);
+  float fresnel = pow(1.0 - cosTheta, fresnelPower);
   vec3 combinedEnv = mix(tintedRefraction, reflectionColor, clamp(fresnel + 0.05, 0.0, 1.0));
-
-  float viewAlignment = clamp(fresnelDot, 0.0, 1.0);
   float depthFactor = pow(1.0 - viewAlignment, 1.3);
   vec3 volumeColor = mix(surfaceColor, deepColor, depthFactor);
   float absorption = exp(-absorptionStrength * depthFactor * 1.5);
