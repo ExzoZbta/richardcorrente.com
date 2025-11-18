@@ -46,6 +46,8 @@ function WaterSphereScene() {
   const envMapRef = useRef<THREE.WebGLRenderTarget | null>(null);
   const lightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
   const [hdrEnvMap, setHdrEnvMap] = useState<THREE.Texture | null>(null);
+  const sphereRadius = 2.0; // 1.5 original size
+  const sphereSegments = 160; // 160 original segments
 
   useEffect(() => {
     let disposed = false;
@@ -91,7 +93,13 @@ function WaterSphereScene() {
       <directionalLight position={[5, 5, 5]} intensity={1} />
       <pointLight position={[-5, -5, -5]} intensity={0.5} />
       <BackgroundCapture onRenderTargetReady={(rt) => { envMapRef.current = rt; }} />
-      <WaterSphere envMap={envMapRef.current} hdrEnvMap={hdrEnvMap} lightPosition={lightPosition} />
+      <WaterSphere
+        envMap={envMapRef.current}
+        hdrEnvMap={hdrEnvMap}
+        lightPosition={lightPosition}
+        radius={sphereRadius}
+        segments={sphereSegments}
+      />
     </Canvas>
   );
 }

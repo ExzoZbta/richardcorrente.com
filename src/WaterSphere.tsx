@@ -9,9 +9,11 @@ interface WaterSphereProps {
   envMap?: THREE.WebGLRenderTarget | null;
   hdrEnvMap?: THREE.Texture | null;
   lightPosition?: THREE.Vector3;
+  radius?: number;
+  segments?: number;
 }
 
-function WaterSphere({ envMap, hdrEnvMap, lightPosition }: WaterSphereProps) {
+function WaterSphere({ envMap, hdrEnvMap, lightPosition, radius, segments }: WaterSphereProps) {
   const meshRef = useRef<Mesh>(null);
   const timeRef = useRef(0);
   const { size, camera } = useThree();
@@ -101,9 +103,12 @@ function WaterSphere({ envMap, hdrEnvMap, lightPosition }: WaterSphereProps) {
     }
   });
 
+  const sphereRadius = radius ?? 1.5;
+  const sphereSegments = segments ?? 160;
+
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1.5, 128, 128]} />
+      <sphereGeometry args={[sphereRadius, sphereSegments, sphereSegments]} />
       <primitive object={material} attach="material" />
     </mesh>
   );
