@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import WaterSphere from './WaterSphere';
+import hdrPath from './assets/hdr/qwantani_puresky_1k.hdr';
 
 function BackgroundCapture({ onRenderTargetReady }: { onRenderTargetReady: (rt: THREE.WebGLRenderTarget) => void }) {
   const { gl, scene, camera, size } = useThree();
@@ -55,8 +56,7 @@ function WaterSphereScene() {
     loader.setDataType(THREE.FloatType);
     loader.setCrossOrigin('anonymous');
     loader.load(
-      // 'https://threejs.org/examples/textures/equirectangular/venice_sunset_1k.hdr',
-      '/hdr/qwantani_puresky_1k.hdr',
+      hdrPath,
       (texture) => {
         if (disposed) {
           texture.dispose();
