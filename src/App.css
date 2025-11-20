@@ -174,7 +174,6 @@
   align-items: flex-start;
   justify-content: flex-end;
   padding-right: 2rem;
-  padding-top: 2rem;
 }
 
 .scroll-container {
@@ -197,6 +196,7 @@
   flex-direction: column;
   gap: 156px;
   align-items: flex-end;
+  padding-top: 2rem;
 }
 
 .project-item {
@@ -249,6 +249,7 @@
 
   .project-list {
     gap: 80px;
+    padding-top: 1.5rem;
   }
 
   .left-panel {
@@ -257,7 +258,6 @@
 
   .right-panel {
     padding-right: 1.5rem;
-    padding-top: 1.5rem;
   }
 }
 
