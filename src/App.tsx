@@ -230,6 +230,28 @@ function Home() {
     return () => window.removeEventListener('resize', updatePadding);
   }, []);
 
+  // Scroll to center first item on initial load
+  useEffect(() => {
+    if (topPadding > 0 && scrollContainerRef.current) {
+      const scrollContainer = scrollContainerRef.current;
+      const firstItem = scrollContainer.querySelector('.project-item');
+      
+      if (firstItem) {
+        // Wait for next frame to ensure padding is applied
+        requestAnimationFrame(() => {
+          const containerRect = scrollContainer.getBoundingClientRect();
+          const itemRect = firstItem.getBoundingClientRect();
+          const containerCenter = containerRect.height / 2;
+          const itemHeight = itemRect.height;
+          
+          // Scroll so the first item is centered
+          const scrollTarget = topPadding - containerCenter + itemHeight / 2;
+          scrollContainer.scrollTop = scrollTarget;
+        });
+      }
+    }
+  }, [topPadding]);
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
@@ -249,7 +271,6 @@ function Home() {
         const distanceFromCenter = itemCenterY - centerY;
         const maxDistance = containerRect.height / 2;
         
-        // Normalize to -1 to 1 range
         const progress = Math.max(-1, Math.min(1, distanceFromCenter / maxDistance));
         
         newScrollProgress[index] = progress;
@@ -276,16 +297,14 @@ function Home() {
     // Calculate rotation based on progress (-90 to 90 degrees)
     const rotateX = progress * 35; // Reduced angle for subtler effect
     
-    // Calculate opacity (fade in/out at edges)
     const opacity = Math.max(0, 1 - Math.abs(progress) * 0.7);
     
     // Calculate scale (slightly smaller at edges)
     const scale = 1 - Math.abs(progress) * 0.15;
     
-    // Calculate translateZ for depth effect
     const translateZ = -Math.abs(progress) * 80;
     
-    // Calculate translateX for diagonal movement
+    // diagonal movement
     const translateX = progress * -30;
 
     return {
