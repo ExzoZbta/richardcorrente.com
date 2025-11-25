@@ -174,6 +174,7 @@
   align-items: flex-start;
   justify-content: flex-end;
   padding-right: 2rem;
+  perspective: 1500px;
 }
 
 .scroll-container {
@@ -200,6 +201,11 @@
   padding-top: 2rem;
 }
 
+.carousel-list {
+  transform-style: preserve-3d;
+  perspective: 1500px;
+}
+
 .project-item {
   font-family: 'Saans', sans-serif;
   font-size: 4rem;
@@ -209,9 +215,11 @@
   color: #000;
   text-transform: lowercase;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, color 0.2s ease;
   text-align: right;
   width: 100%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
 }
 
 .project-item:hover {

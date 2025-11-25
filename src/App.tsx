@@ -198,7 +198,9 @@ function Layout({ children }: { children: React.ReactNode }) {
 function Home() {
   const projectListRef = useRef<HTMLDivElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [bottomPadding, setBottomPadding] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState<{ [key: number]: number }>({});
 
   const projects = [
     'saudade',
@@ -226,16 +228,90 @@ function Home() {
     return () => window.removeEventListener('resize', updatePadding);
   }, []);
 
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const items = scrollContainer.querySelectorAll('.project-item');
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const centerY = containerRect.top + containerRect.height / 2;
+
+      const newScrollProgress: { [key: number]: number } = {};
+
+      items.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+        const itemCenterY = rect.top + rect.height / 2;
+        
+        // Calculate distance from center of viewport
+        const distanceFromCenter = itemCenterY - centerY;
+        const maxDistance = containerRect.height / 2;
+        
+        // Normalize to -1 to 1 range
+        const progress = Math.max(-1, Math.min(1, distanceFromCenter / maxDistance));
+        
+        newScrollProgress[index] = progress;
+      });
+
+      setScrollProgress(newScrollProgress);
+    };
+
+    // Initial calculation
+    handleScroll();
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const getItemStyle = (index: number) => {
+    const progress = scrollProgress[index] || 0;
+    
+    // Calculate rotation based on progress (-90 to 90 degrees)
+    const rotateX = progress * 35; // Reduced angle for subtler effect
+    
+    // Calculate opacity (fade in/out at edges)
+    const opacity = Math.max(0, 1 - Math.abs(progress) * 0.7);
+    
+    // Calculate scale (slightly smaller at edges)
+    const scale = 1 - Math.abs(progress) * 0.15;
+    
+    // Calculate translateZ for depth effect
+    const translateZ = -Math.abs(progress) * 80;
+    
+    // Calculate translateX for diagonal movement
+    const translateX = progress * -30;
+
+    return {
+      transform: `
+        perspective(1000px) 
+        rotateX(${rotateX}deg) 
+        translateZ(${translateZ}px)
+        translateX(${translateX}px)
+        scale(${scale})
+      `,
+      opacity,
+    };
+  };
+
   return (
     <div className="right-panel">
-      <div className="scroll-container">
+      <div ref={scrollContainerRef} className="scroll-container">
         <div 
           ref={projectListRef}
-          className="project-list"
+          className="project-list carousel-list"
           style={{ paddingBottom: `${bottomPadding}px` }}
         >
           {projects.map((project, index) => (
-            <div key={index} className="project-item">
+            <div 
+              key={index} 
+              className="project-item carousel-item"
+              style={getItemStyle(index)}
+            >
               {project}
             </div>
           ))}
