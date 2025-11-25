@@ -200,6 +200,7 @@ function Home() {
   const leftPanelRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [bottomPadding, setBottomPadding] = useState(0);
+  const [topPadding, setTopPadding] = useState(0);
   const [scrollProgress, setScrollProgress] = useState<{ [key: number]: number }>({});
 
   const projects = [
@@ -215,10 +216,11 @@ function Home() {
 
   useEffect(() => {
     const updatePadding = () => {
-      if (leftPanelRef.current && projectListRef.current) {
-        const leftPanelHeight = leftPanelRef.current.offsetHeight;
+      if (scrollContainerRef.current) {
         const viewportHeight = window.innerHeight;
-        const padding = viewportHeight - leftPanelHeight;
+        // Add padding equal to half viewport height so first/last items can center
+        const padding = viewportHeight / 2;
+        setTopPadding(padding);
         setBottomPadding(padding);
       }
     };
@@ -304,7 +306,10 @@ function Home() {
         <div 
           ref={projectListRef}
           className="project-list carousel-list"
-          style={{ paddingBottom: `${bottomPadding}px` }}
+          style={{ 
+            paddingTop: `${topPadding}px`,
+            paddingBottom: `${bottomPadding}px` 
+          }}
         >
           {projects.map((project, index) => (
             <div 

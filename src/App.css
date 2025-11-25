@@ -198,7 +198,6 @@
   flex-direction: column;
   gap: 156px;
   align-items: flex-end;
-  padding-top: 2rem;
 }
 
 .carousel-list {
@@ -258,7 +257,6 @@
 
   .project-list {
     gap: 80px;
-    padding-top: 1.5rem;
   }
 
   .left-panel {
