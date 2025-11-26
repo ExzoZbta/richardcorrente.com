@@ -466,7 +466,7 @@
 }
 
 .project-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   max-width: 902px;
   margin-left: auto;
   margin-right: auto;
@@ -476,7 +476,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .project-image-placeholder {
@@ -504,7 +504,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 1.5rem auto;
+}
+
+.project-content-image:first-of-type {
+  margin-bottom: 1.5rem;
 }
 
 .project-divider {
@@ -512,7 +516,7 @@
   max-width: 902px;
   height: 1px;
   background-color: #000;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 1.5rem auto;
 }
 
 .project-tools-skills {
@@ -520,7 +524,7 @@
   flex-wrap: wrap;
   gap: 1.875rem;
   align-items: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   max-width: 902px;
   margin-left: auto;
   margin-right: auto;

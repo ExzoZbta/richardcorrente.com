@@ -446,8 +446,8 @@ const projectContentData: { [key: string]: any } = {
     date: '2024-2025',
     tools: ['Unity3D (OpenXR)', 'C#', 'Blender', 'Adobe Premiere Pro'],
     skills: ['Game design', 'Game development'],
-    githubUrl: '#',
-    projectUrl: '#',
+    githubUrl: 'https://github.com/ExzoZbta/saudade-vr',
+    projectUrl: 'https://github.com/ExzoZbta/saudade-vr',
     content: [
       { type: 'image', placeholder: 'project image/video' },
       { type: 'divider' },
