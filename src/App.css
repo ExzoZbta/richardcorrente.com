@@ -400,11 +400,26 @@
   width: 98%;
   max-width: 1600px;
   height: 96vh;
-  background-color: rgba(236, 237, 237, 1);
+  background-color: #ffffff;
   z-index: 2;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.project-grain-overlay {
+  position: absolute;
+  top: -110%;
+  left: -50%;
+  width: 300%;
+  height: 300%;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 10;
+  animation: grain-animation 8s steps(10) infinite;
+  border-radius: 8px;
 }
 
 .project-content-scroll {
@@ -414,6 +429,8 @@
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  position: relative;
+  z-index: 11;
 }
 
 .project-content-scroll::-webkit-scrollbar {
@@ -443,7 +460,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 10;
+  z-index: 12;
   margin-bottom: -40px;
   margin-left: 2rem;
 }
@@ -463,6 +480,7 @@
   padding-bottom: 4rem;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
 }
 
 .project-header {

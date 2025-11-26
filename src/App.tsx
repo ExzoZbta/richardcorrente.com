@@ -603,6 +603,10 @@ function ProjectContent() {
     <div className="project-overlay">
       <div className="project-overlay-background" onClick={handleClose} />
       <div className="project-content-container" ref={contentRef}>
+        <div 
+          className="project-grain-overlay"
+          style={{ backgroundImage: `url(${grainTexture})` }}
+        />
         <div className="project-content-scroll">
           <button className="project-close-button" onClick={handleClose} aria-label="Close">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
