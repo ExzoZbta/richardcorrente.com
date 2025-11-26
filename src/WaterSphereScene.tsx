@@ -47,7 +47,7 @@ function WaterSphereScene() {
   const envMapRef = useRef<THREE.WebGLRenderTarget | null>(null);
   const lightPosition = useMemo(() => new THREE.Vector3(5, 5, 5), []);
   const [hdrEnvMap, setHdrEnvMap] = useState<THREE.Texture | null>(null);
-  const sphereRadius = 2.0; // 1.5 original size
+  const sphereRadius = 2.05; // 1.5 original size
   const sphereSegments = 160; // 160 original segments
 
   useEffect(() => {
