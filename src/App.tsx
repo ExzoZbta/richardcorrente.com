@@ -202,6 +202,7 @@ function Home() {
   const [bottomPadding, setBottomPadding] = useState(0);
   const [topPadding, setTopPadding] = useState(0);
   const [scrollProgress, setScrollProgress] = useState<{ [key: number]: number }>({});
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   const projects = [
     'saudade',
@@ -212,6 +213,50 @@ function Home() {
     'writings in the fog',
     'fog animation',
     'emotion synthesizer',
+  ];
+
+  // Project details data
+  const projectDetails = [
+    {
+      name: 'saudade',
+      tags: 'VIRTUAL REALITY / EXHIBITION / THESIS',
+      mediaPlaceholder: 'Video/GIF placeholder for saudade'
+    },
+    {
+      name: "'Mode 7' game engine",
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: "Video/GIF placeholder for 'Mode 7' game engine"
+    },
+    {
+      name: 'attack of the clones',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for attack of the clones'
+    },
+    {
+      name: 'webzine',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for webzine'
+    },
+    {
+      name: 'tool for one',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for tool for one'
+    },
+    {
+      name: 'writings in the fog',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for writings in the fog'
+    },
+    {
+      name: 'fog animation',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for fog animation'
+    },
+    {
+      name: 'emotion synthesizer',
+      tags: 'PLACEHOLDER / TAGS / HERE',
+      mediaPlaceholder: 'Video/GIF placeholder for emotion synthesizer'
+    },
   ];
 
   useEffect(() => {
@@ -320,28 +365,46 @@ function Home() {
   };
 
   return (
-    <div className="right-panel">
-      <div ref={scrollContainerRef} className="scroll-container">
-        <div 
-          ref={projectListRef}
-          className="project-list carousel-list"
-          style={{ 
-            paddingTop: `${topPadding}px`,
-            paddingBottom: `${bottomPadding}px` 
-          }}
-        >
-          {projects.map((project, index) => (
-            <div 
-              key={index} 
-              className="project-item carousel-item"
-              style={getItemStyle(index)}
-            >
-              {project}
+    <>
+      {/* Project Details Display (behind water sphere) */}
+      {hoveredProject !== null && (
+        <div className="project-details-container">
+          <div className="project-details-content">
+            <div className="project-tags">
+              {projectDetails[hoveredProject].tags}
             </div>
-          ))}
+            <div className="project-media-placeholder">
+              {projectDetails[hoveredProject].mediaPlaceholder}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="right-panel">
+        <div ref={scrollContainerRef} className="scroll-container">
+          <div 
+            ref={projectListRef}
+            className="project-list carousel-list"
+            style={{ 
+              paddingTop: `${topPadding}px`,
+              paddingBottom: `${bottomPadding}px` 
+            }}
+          >
+            {projects.map((project, index) => (
+              <div 
+                key={index} 
+                className="project-item carousel-item"
+                style={getItemStyle(index)}
+                onMouseEnter={() => setHoveredProject(index)}
+                onMouseLeave={() => setHoveredProject(null)}
+              >
+                {project}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
