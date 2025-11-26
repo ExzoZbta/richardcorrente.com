@@ -480,7 +480,7 @@
 }
 
 .project-image-placeholder {
-  font-family: 'SpaceGrotesk', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 1.5rem;
   color: #666;
 }
@@ -527,20 +527,20 @@
 }
 
 .project-tag {
-  font-family: 'Saans', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 1.125rem;
   line-height: 1;
   color: #000;
 }
 
 .project-separator {
-  font-family: 'Saans', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 1.125rem;
   color: #000;
 }
 
 .project-date {
-  font-family: 'Saans', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 1rem;
   color: #000;
 }
@@ -559,7 +559,7 @@
 }
 
 .project-github-link .project-visit {
-  font-family: 'Saans', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 1rem;
   color: #000;
   white-space: nowrap;
@@ -581,7 +581,7 @@
 }
 
 .project-paragraph {
-  font-family: 'Saans', sans-serif;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
   font-size: 2rem;
   line-height: 1.4;
   letter-spacing: -0.01em;
