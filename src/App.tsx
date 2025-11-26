@@ -219,42 +219,42 @@ function Home() {
   const projectDetails = [
     {
       name: 'saudade',
-      tags: 'VIRTUAL REALITY / EXHIBITION / THESIS',
+      tags: '- VIRTUAL REALITY / EXHIBITION / THESIS -',
       mediaPlaceholder: 'Video/GIF placeholder for saudade'
     },
     {
       name: "'Mode 7' game engine",
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: "Video/GIF placeholder for 'Mode 7' game engine"
     },
     {
       name: 'attack of the clones',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for attack of the clones'
     },
     {
       name: 'webzine',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for webzine'
     },
     {
       name: 'tool for one',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for tool for one'
     },
     {
       name: 'writings in the fog',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for writings in the fog'
     },
     {
       name: 'fog animation',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for fog animation'
     },
     {
       name: 'emotion synthesizer',
-      tags: 'PLACEHOLDER / TAGS / HERE',
+      tags: '- PLACEHOLDER / TAGS / HERE -',
       mediaPlaceholder: 'Video/GIF placeholder for emotion synthesizer'
     },
   ];
