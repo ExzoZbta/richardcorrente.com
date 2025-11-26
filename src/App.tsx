@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
 import grainTexture from './assets/img/grain.jpg';
@@ -203,6 +203,7 @@ function Home() {
   const [topPadding, setTopPadding] = useState(0);
   const [scrollProgress, setScrollProgress] = useState<{ [key: number]: number }>({});
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const projects = [
     'saudade',
@@ -213,6 +214,17 @@ function Home() {
     'writings in the fog',
     'fog animation',
     'emotion synthesizer',
+  ];
+
+  const projectSlugs = [
+    'saudade',
+    'mode-7-game-engine',
+    'attack-of-the-clones',
+    'webzine',
+    'tool-for-one',
+    'writings-in-the-fog',
+    'fog-animation',
+    'emotion-synthesizer',
   ];
 
   // Project details data
@@ -366,7 +378,7 @@ function Home() {
 
   return (
     <>
-      {/* Project Details Display (behind water sphere) */}
+      {/* Project Details Display */}
       {hoveredProject !== null && (
         <div className="project-details-container">
           <div className="project-details-content">
@@ -397,6 +409,7 @@ function Home() {
                 style={getItemStyle(index)}
                 onMouseEnter={() => setHoveredProject(index)}
                 onMouseLeave={() => setHoveredProject(null)}
+                onClick={() => navigate(`/project/${projectSlugs[index]}`)}
               >
                 {project}
               </div>
@@ -426,6 +439,234 @@ function Contact() {
   );
 }
 
+// Project Content Data
+const projectContentData: { [key: string]: any } = {
+  'saudade': {
+    title: 'saudade',
+    date: '2024-2025',
+    tools: ['Unity3D (OpenXR)', 'C#', 'Blender', 'Adobe Premiere Pro'],
+    skills: ['Game design', 'Game development'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Saudade is a VR psychological horror experience investigating how immersion can be engineered through atmosphere, dynamic mechanics, and environmental storytelling.' },
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'paragraph', text: 'Built around a dynamic "figure of horror," the game uses heuristic-based AI to observe and dynamically react to player behavior creating a relationship defined by tension and unpredictability.' },
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'paragraph', text: 'By prioritizing mood, sound, spatial disorientation, and adaptive threat over traditional jump scares, Saudade serves as an in-depth exploration of immersive game design, demonstrating how VR can heighten emotional and cognitive engagement.' },
+      { type: 'section-title', text: 'GAMEPLAY' },
+      { type: 'paragraph', text: 'To complete the game, the player must avoid \'The Fragment\' and escape Saudade Memory Rehabilitation Center. However, before escape, the player must collect and watch 3 VHS tapes. Upon collecting all 3 tapes, the player completes the game.' },
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'paragraph', text: 'Each tape depicts the interactions between a father (the recorder), his wife, and his young daughter.' },
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'paragraph', text: 'To evade \'The Fragment,\' the player can hide under beds and in lockers scattered throughout the facility. If the player is caught, all progress is lost as they respawn in Patient #023\'s room—where the player woke up.' },
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'paragraph', text: 'The player can only see \'The Fragment\' by looking into the reflection of a handheld mirror. Otherwise, the player must rely on sound cues emitted by the entity\'s movements or actions.' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  // Placeholder data for other projects
+  'mode-7-game-engine': {
+    title: "'Mode 7' game engine",
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'attack-of-the-clones': {
+    title: 'attack of the clones',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'webzine': {
+    title: 'webzine',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'tool-for-one': {
+    title: 'tool for one',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'writings-in-the-fog': {
+    title: 'writings in the fog',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'fog-animation': {
+    title: 'fog animation',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  },
+  'emotion-synthesizer': {
+    title: 'emotion synthesizer',
+    date: 'TBD',
+    tools: ['Placeholder Tool'],
+    skills: ['Placeholder Skill'],
+    githubUrl: '#',
+    projectUrl: '#',
+    content: [
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'divider' },
+      { type: 'tools-skills' },
+      { type: 'section-title', text: 'OVERVIEW' },
+      { type: 'paragraph', text: 'Project content coming soon...' },
+      { type: 'image', placeholder: 'project image/video' }
+    ]
+  }
+};
+
+// Project Content Component
+function ProjectContent() {
+  const { projectSlug } = useParams<{ projectSlug: string }>();
+  const navigate = useNavigate();
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const projectData = projectSlug ? projectContentData[projectSlug] : null;
+
+  if (!projectData) {
+    return <div>Project not found</div>;
+  }
+
+  const handleClose = () => {
+    navigate('/');
+  };
+
+  return (
+    <div className="project-overlay">
+      <div className="project-overlay-background" onClick={handleClose} />
+      <div className="project-content-container" ref={contentRef}>
+        <div className="project-content-scroll">
+          <button className="project-close-button" onClick={handleClose} aria-label="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          <div className="project-content-inner">
+            {/* Header with Date and Title */}
+            <div className="project-header">
+              <div className="project-header-top">
+                <span className="project-date">{projectData.date}</span>
+                <a href={projectData.githubUrl} className="project-github-link" target="_blank" rel="noopener noreferrer">
+                  <span className="project-visit">visit project &gt;</span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                </a>
+              </div>
+              <h1 className="project-title">{projectData.title}</h1>
+            </div>
+
+            {/* Content Items */}
+            {projectData.content.map((item: any, index: number) => {
+              if (item.type === 'image') {
+                return (
+                  <div key={index} className="project-content-image">
+                    <span className="project-image-placeholder">{item.placeholder}</span>
+                  </div>
+                );
+              } else if (item.type === 'divider') {
+                return <div key={index} className="project-divider" />;
+              } else if (item.type === 'tools-skills') {
+                return (
+                  <div key={index} className="project-tools-skills">
+                    {projectData.tools.map((tool: string, toolIndex: number) => (
+                      <span key={`tool-${toolIndex}`} className="project-tag">{tool}</span>
+                    ))}
+                    <span className="project-separator">|</span>
+                    {projectData.skills.map((skill: string, skillIndex: number) => (
+                      <span key={`skill-${skillIndex}`} className="project-tag">{skill}</span>
+                    ))}
+                  </div>
+                );
+              } else if (item.type === 'section-title') {
+                return (
+                  <h2 key={index} className="project-section-title">{item.text}</h2>
+                );
+              } else if (item.type === 'paragraph') {
+                return (
+                  <p key={index} className="project-paragraph">{item.text}</p>
+                );
+              }
+              return null;
+            })}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main App Component
 function App() {
   return (
@@ -434,6 +675,7 @@ function App() {
         <Route path="/" element={<Layout><Home /></Layout>} />
         <Route path="/about" element={<Layout><About /></Layout>} />
         <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/project/:projectSlug" element={<><Layout><Home /></Layout><ProjectContent /></>} />
       </Routes>
     </Router>
   );
