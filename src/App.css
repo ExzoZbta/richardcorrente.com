@@ -450,28 +450,43 @@
   position: sticky;
   top: 2rem;
   left: 2rem;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 12;
   margin-bottom: -40px;
   margin-left: 2rem;
+  padding: 0;
 }
 
-.project-close-button:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: scale(1.05);
+.close-sphere {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  clip-path: polygon(50% 0%, 80% 10%, 100% 50%, 80% 90%, 50% 100%, 20% 90%, 0% 50%, 20% 10%);
+  transition: clip-path 0.45s cubic-bezier(0.6, 0, 0.3, 1), transform 0.4s cubic-bezier(0.6, 0, 0.3, 1);
 }
 
-.project-close-button svg {
-  color: #000;
+.close-sphere-water {
+  position: absolute;
+  inset: 0;
+}
+
+.close-sphere canvas {
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+}
+
+.project-close-button:hover .close-sphere {
+  clip-path: polygon(85% 0%, 85% 25%, 100% 25%, 100% 75%, 85% 75%, 85% 100%, 0% 50%, 0% 50%);
+  transform: translateX(-4px);
 }
 
 .project-content-inner {
