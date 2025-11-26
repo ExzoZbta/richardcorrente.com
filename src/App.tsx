@@ -584,7 +584,6 @@ const projectContentData: { [key: string]: any } = {
   }
 };
 
-// Project Content Component
 function ProjectContent() {
   const { projectSlug } = useParams<{ projectSlug: string }>();
   const navigate = useNavigate();
