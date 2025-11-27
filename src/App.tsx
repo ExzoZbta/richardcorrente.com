@@ -434,6 +434,7 @@ function Home() {
               <div 
                 key={index} 
                 className="project-item carousel-item"
+                data-text={project}
                 style={getItemStyle(index)}
                 onMouseEnter={() => setHoveredProject(index)}
                 onMouseLeave={() => setHoveredProject(null)}
