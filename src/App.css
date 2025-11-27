@@ -577,8 +577,8 @@
   overflow-y: hidden;
   cursor: grab;
   outline: none;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;

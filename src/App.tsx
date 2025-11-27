@@ -452,8 +452,10 @@ function ImageCarousel({ images }: { images: string[] }) {
     isDragging: false,
     hasDragged: false,
     startX: 0,
+    startY: 0,
     scrollLeft: 0,
     startTime: 0,
+    dragDirection: null as 'horizontal' | 'vertical' | null,
   });
 
   const scrollToIndex = useCallback((index: number) => {
@@ -522,53 +524,76 @@ function ImageCarousel({ images }: { images: string[] }) {
       return;
     }
     
-    const clientX = e.clientX;
     dragState.current = {
       isDragging: true,
       hasDragged: false,
-      startX: clientX,
+      startX: e.clientX,
+      startY: e.clientY,
       scrollLeft: container.scrollLeft,
       startTime: Date.now(),
+      dragDirection: null,
     };
-    container.classList.add('is-dragging');
-    container.setPointerCapture?.(e.pointerId);
-    e.preventDefault();
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragState.current.isDragging) return;
-    const container = carouselRef.current;
-    if (!container) return;
-    
-    const diff = e.clientX - dragState.current.startX;
-    
-    // Mark as dragged if moved more than 5 pixels
-    if (Math.abs(diff) > 5) {
-      dragState.current.hasDragged = true;
-    }
-    
-    container.scrollLeft = dragState.current.scrollLeft - diff;
-    e.preventDefault();
-  };
-
-  const endDrag = (e?: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragState.current.isDragging) return;
-    dragState.current.isDragging = false;
-    carouselRef.current?.classList.remove('is-dragging');
-    if (e && e.pointerId !== undefined) {
-      carouselRef.current?.releasePointerCapture?.(e.pointerId);
-    }
+    // Don't prevent default or capture pointer yet - wait to see drag direction
   };
 
   useEffect(() => {
     const container = carouselRef.current;
     if (!container) return;
 
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!dragState.current.isDragging) return;
+      
+      const diffX = e.clientX - dragState.current.startX;
+      const diffY = e.clientY - dragState.current.startY;
+      
+      // Determine drag direction on first significant movement
+      if (dragState.current.dragDirection === null) {
+        const absX = Math.abs(diffX);
+        const absY = Math.abs(diffY);
+        
+        // Need at least 8px of movement to determine direction
+        if (absX > 8 || absY > 8) {
+          // If horizontal movement is more than 2x vertical, it's horizontal
+          if (absX > absY * 2) {
+            dragState.current.dragDirection = 'horizontal';
+            container.classList.add('is-dragging');
+            e.preventDefault(); // Only prevent default once we know it's horizontal
+          } else {
+            // Otherwise treat as vertical scroll - don't interfere
+            dragState.current.dragDirection = 'vertical';
+            dragState.current.isDragging = false;
+            return;
+          }
+        } else {
+          // Not enough movement yet to determine direction
+          return;
+        }
+      }
+      
+      // Only handle horizontal drags
+      if (dragState.current.dragDirection === 'horizontal') {
+        // Mark as dragged if moved more than 5 pixels
+        if (Math.abs(diffX) > 5) {
+          dragState.current.hasDragged = true;
+        }
+        
+        container.scrollLeft = dragState.current.scrollLeft - diffX;
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
     const handlePointerUp = (e: PointerEvent) => {
       if (!dragState.current.isDragging) return;
       
-      endDrag();
-      container.releasePointerCapture?.(e.pointerId);
+      // Only process if it was a horizontal drag
+      if (dragState.current.dragDirection !== 'horizontal') {
+        dragState.current.isDragging = false;
+        return;
+      }
+      
+      dragState.current.isDragging = false;
+      container.classList.remove('is-dragging');
 
       const width = container.clientWidth;
       if (!width) return;
@@ -592,8 +617,8 @@ function ImageCarousel({ images }: { images: string[] }) {
       let targetIndex = currentIndex;
       
       // Very forgiving thresholds based on velocity
-      const isQuickSwipe = velocity > 0.3; // Fast swipe (lowered from 0.5)
-      const threshold = isQuickSwipe ? 0.05 : 0.08; // Much lower thresholds
+      const isQuickSwipe = velocity > 0.3;
+      const threshold = isQuickSwipe ? 0.05 : 0.08;
       
       if (direction > 0 && (fraction > threshold || isQuickSwipe)) {
         targetIndex = currentIndex + 1;
@@ -604,11 +629,15 @@ function ImageCarousel({ images }: { images: string[] }) {
       scrollToIndex(targetIndex);
     };
 
-    container.addEventListener('pointerup', handlePointerUp);
-    container.addEventListener('pointerleave', handlePointerUp);
+    // Use document-level listeners with capture to handle pointer events globally
+    document.addEventListener('pointermove', handlePointerMove, { capture: true, passive: false });
+    document.addEventListener('pointerup', handlePointerUp, { capture: true });
+    document.addEventListener('pointercancel', handlePointerUp, { capture: true });
+    
     return () => {
-      container.removeEventListener('pointerup', handlePointerUp);
-      container.removeEventListener('pointerleave', handlePointerUp);
+      document.removeEventListener('pointermove', handlePointerMove, { capture: true });
+      document.removeEventListener('pointerup', handlePointerUp, { capture: true });
+      document.removeEventListener('pointercancel', handlePointerUp, { capture: true });
     };
   }, [scrollToIndex, currentIndex]);
 
@@ -618,10 +647,11 @@ function ImageCarousel({ images }: { images: string[] }) {
         className="project-carousel-container"
         ref={carouselRef}
         tabIndex={0}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
       >
-        <div className="project-carousel-track">
+        <div 
+          className="project-carousel-track"
+          onPointerDown={handlePointerDown}
+        >
           {images.map((img, idx) => (
             <div key={idx} className="project-carousel-slide">
               <img src={img} alt={`Slide ${idx + 1}`} className="project-image" draggable={false} />
