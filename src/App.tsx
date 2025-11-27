@@ -3,8 +3,12 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate,
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
 import grainTexture from './assets/img/grain.jpg';
-import overview1 from './assets/img/overview1.jpg';
+import overview2 from './assets/img/fragment-tpose.jpg';
+import overview22 from './assets/img/fragment-blender.PNG';
+import overview23 from './assets/img/fragment-trace.jpg';
+import gameplay1 from './assets/img/gameplay1.jpg';
 import exhibition1 from './assets/img/exhibition1.jpg';
+import sprinting from './assets/vid/sprinting.mp4';
 
 
 // Shared Layout Component
@@ -199,7 +203,6 @@ function Layout({ children }: { children: React.ReactNode }) {
 // Home Page Component
 function Home() {
   const projectListRef = useRef<HTMLDivElement>(null);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [bottomPadding, setBottomPadding] = useState(0);
   const [topPadding, setTopPadding] = useState(0);
@@ -441,6 +444,117 @@ function Contact() {
   );
 }
 
+// Image Carousel Component
+function ImageCarousel({ images }: { images: string[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [translateX, setTranslateX] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1));
+  };
+
+  const goToPrev = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.clientX);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].clientX);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const diff = e.clientX - startX;
+    setTranslateX(diff);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const diff = e.touches[0].clientX - startX;
+    setTranslateX(diff);
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    // Threshold for swipe (100px)
+    if (translateX < -100) {
+      goToNext();
+    } else if (translateX > 100) {
+      goToPrev();
+    }
+
+    setTranslateX(0);
+  };
+
+  return (
+    <div 
+      className="project-carousel-container"
+      ref={carouselRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleDragEnd}
+      onMouseLeave={handleDragEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleDragEnd}
+    >
+      <div 
+        className="project-carousel-track"
+        style={{
+          transform: `translateX(calc(-${currentIndex * 100}% + ${translateX}px))`,
+          transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
+        {images.map((img, idx) => (
+          <div key={idx} className="project-carousel-slide">
+            <img src={img} alt={`Slide ${idx + 1}`} className="project-image" />
+          </div>
+        ))}
+      </div>
+
+      {/* Navigation Arrows */}
+      {currentIndex > 0 && (
+        <button 
+          className="carousel-arrow carousel-arrow-left" 
+          onClick={goToPrev}
+          aria-label="Previous image"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+      
+      {currentIndex < images.length - 1 && (
+        <button 
+          className="carousel-arrow carousel-arrow-right" 
+          onClick={goToNext}
+          aria-label="Next image"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
+      {/* Slide Counter */}
+      <div className="carousel-counter">
+        {currentIndex + 1} / {images.length}
+      </div>
+    </div>
+  );
+}
+
 // Project Content Data
 const projectContentData: { [key: string]: any } = {
   'saudade': {
@@ -451,27 +565,28 @@ const projectContentData: { [key: string]: any } = {
     githubUrl: 'https://github.com/ExzoZbta/saudade-vr',
     projectUrl: 'https://github.com/ExzoZbta/saudade-vr',
     content: [
-      { type: 'image', src: overview1 },
+      { type: 'image', placeholder: 'overview1' },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
       { type: 'paragraph', text: 'Saudade is a VR psychological horror experience investigating how immersion can be engineered through atmosphere, dynamic mechanics, and environmental storytelling.' },
       { type: 'image', placeholder: 'project image/video' },
       { type: 'paragraph', text: 'Built around a dynamic "figure of horror," the game uses heuristic-based AI to observe and dynamically react to player behavior creating a relationship defined by tension and unpredictability.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'carousel', images: [overview2, overview22, overview23] },
       { type: 'paragraph', text: 'By prioritizing mood, sound, spatial disorientation, and adaptive threat over traditional jump scares, Saudade serves as an in-depth exploration of immersive game design, demonstrating how VR can heighten emotional and cognitive engagement.' },
       { type: 'section-title', text: 'GAMEPLAY' },
       { type: 'paragraph', text: 'To complete the game, the player must avoid \'The Fragment\' and escape Saudade Memory Rehabilitation Center. However, before escape, the player must collect and watch 3 VHS tapes. Upon collecting all 3 tapes, the player completes the game.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'image', src: gameplay1 },
       { type: 'paragraph', text: 'Each tape depicts the interactions between a father (the recorder), his wife, and his young daughter.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'image', placeholder: 'tape footage video' },
       { type: 'paragraph', text: 'To evade \'The Fragment,\' the player can hide under beds and in lockers scattered throughout the facility. If the player is caught, all progress is lost as they respawn in Patient #023\'s room—where the player woke up.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'image', placeholder: 'hide under bed footage' },
       { type: 'paragraph', text: 'The player can only see \'The Fragment\' by looking into the reflection of a handheld mirror. Otherwise, the player must rely on sound cues emitted by the entity\'s movements or actions.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'image', placeholder: 'reflection video' },
       { type: 'section-title', text: 'EXHIBITION & NARRATIVE' },
       { type: 'paragraph', text: 'Saudade was publicly showcased as an interactive VR installation, presented as a standalone playable environment within a physical exhibition space. The space featured a VCR and a CRT TV, which played the VHS tapes recorded by the father.' },
       { type: 'image', src: exhibition1 },
+      { type: 'video', src: sprinting },
     ]
   },
   // Placeholder data for other projects
@@ -653,6 +768,27 @@ function ProjectContent() {
                     )}
                   </div>
                 );
+              } else if (item.type === 'video') {
+                return (
+                  <div key={index} className="project-content-image">
+                    {item.src ? (
+                      <video 
+                        src={item.src} 
+                        className="project-image project-video" 
+                        autoPlay
+                        loop 
+                        muted
+                        playsInline
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <span className="project-image-placeholder">{item.placeholder}</span>
+                    )}
+                  </div>
+                );
+              } else if (item.type === 'carousel') {
+                return <ImageCarousel key={index} images={item.images} />;
               } else if (item.type === 'divider') {
                 return <div key={index} className="project-divider" />;
               } else if (item.type === 'tools-skills') {

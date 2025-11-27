@@ -552,6 +552,93 @@
   display: block;
 }
 
+.project-video {
+  cursor: pointer;
+}
+
+/* Image Carousel */
+.project-carousel-container {
+  width: 100%;
+  max-width: 902px;
+  height: 492px;
+  background-color: #d9d9d9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+}
+
+.project-carousel-container:active {
+  cursor: grabbing;
+}
+
+.project-carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.project-carousel-slide {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.carousel-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow svg {
+  color: #000;
+}
+
+.carousel-arrow-left {
+  left: 1rem;
+}
+
+.carousel-arrow-right {
+  right: 1rem;
+}
+
+.carousel-counter {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
+  font-size: 0.875rem;
+  color: #000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  z-index: 10;
+}
+
 .project-divider {
   width: 100%;
   max-width: 902px;
@@ -649,7 +736,8 @@
     font-size: 1.75rem;
   }
 
-  .project-content-image {
+  .project-content-image,
+  .project-carousel-container {
     height: 400px;
   }
 }
@@ -673,7 +761,8 @@
     font-size: 2.5rem;
   }
 
-  .project-content-image {
+  .project-content-image,
+  .project-carousel-container {
     height: 300px;
   }
 
@@ -688,6 +777,16 @@
   .project-tag {
     font-size: 1rem;
   }
+
+  .carousel-arrow {
+    width: 28px;
+    height: 28px;
+  }
+
+  .carousel-counter {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -699,11 +798,32 @@
     font-size: 2rem;
   }
 
-  .project-content-image {
+  .project-content-image,
+  .project-carousel-container {
     height: 200px;
   }
 
   .project-paragraph {
     font-size: 1.25rem;
+  }
+
+  .carousel-arrow {
+    width: 24px;
+    height: 24px;
+  }
+
+  .carousel-arrow-left {
+    left: 0.5rem;
+  }
+
+  .carousel-arrow-right {
+    right: 0.5rem;
+  }
+
+  .carousel-counter {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
   }
 }

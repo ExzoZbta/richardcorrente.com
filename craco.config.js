@@ -12,6 +12,10 @@ module.exports = {
           test: /\.hdr$/,
           type: 'asset/resource',
         });
+        oneOfRule.oneOf.unshift({
+          test: /\.(mp4|webm|ogg)$/,
+          type: 'asset/resource',
+        });
       } else {
         webpackConfig.module.rules.push({
           test: /\.glsl$/,
@@ -19,6 +23,10 @@ module.exports = {
         });
         webpackConfig.module.rules.push({
           test: /\.hdr$/,
+          type: 'asset/resource',
+        });
+        webpackConfig.module.rules.push({
+          test: /\.(mp4|webm|ogg)$/,
           type: 'asset/resource',
         });
       }
