@@ -33,7 +33,6 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   // Set CORRENTE position and wait for fonts
   useEffect(() => {
-    
     const initializeCorrentePosition = async () => {
       if (richardRef.current) {
         if (document.fonts && document.fonts.ready) {
@@ -45,9 +44,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       }
     };
     initializeCorrentePosition();
-
-    prevLocationRef.current = location.pathname;
-  }, [location.pathname]);
+  }, []);
 
   // Calculate role positions after CORRENTE is positioned
   useEffect(() => {
@@ -133,6 +130,11 @@ function Layout({ children }: { children: React.ReactNode }) {
     }
     return location.pathname === path;
   };
+
+  // Update prev location ref
+  useEffect(() => {
+    prevLocationRef.current = location.pathname;
+  }, [location.pathname]);
 
   return (
     <div className="App">
@@ -445,7 +447,25 @@ function Home() {
 function About() {
   return (
     <div className="right-panel">
-      {/* content */}
+      <div className="about-container">
+        <div className="about-content">
+          <p className="about-paragraph">
+            I'm Richard Corrente, a developer and artist who likes building things that pull people in worlds you can step inside&nbsp;of, imprinting moments that hopefully stick with&nbsp;you forever.
+          </p>
+          <p className="about-paragraph">
+            I recently graduated from Yale with a B.A. in Computing and the Arts, where I spent most of my time working in VR, game and web design, creative coding, software engineering, and interactive&nbsp;media.
+          </p>
+          <p className="about-paragraph">
+            I'm especially interested in the mechanics behind immersion, specifically how atmosphere, movement, audio, and narrative can impact the way someone feels in a&nbsp;space.
+          </p>
+          <p className="about-paragraph">
+            I ultimately want to create the most memorable experiences&nbsp;possible.
+          </p>
+          <p className="about-paragraph">
+            In my free time, I enjoy working out and playing video games.<br></br>Also, a huge One Piece&nbsp;fan.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -454,7 +474,9 @@ function About() {
 function Contact() {
   return (
     <div className="right-panel">
-      {/* content */}
+      <div className="contact-container">
+        {/* contact content will go here */}
+      </div>
     </div>
   );
 }
