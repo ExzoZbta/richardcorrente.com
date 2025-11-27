@@ -378,6 +378,9 @@ function Home() {
     // diagonal movement
     const translateX = progress * -30;
 
+    // Force full opacity when hovering to prevent gradient from disappearing
+    const finalOpacity = hoveredProject === index ? 1 : opacity;
+
     return {
       transform: `
         perspective(1000px) 
@@ -386,7 +389,7 @@ function Home() {
         translateX(${translateX}px)
         scale(${scale})
       `,
-      opacity,
+      opacity: finalOpacity,
     };
   };
 
