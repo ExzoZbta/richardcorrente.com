@@ -454,6 +454,7 @@ type LazyVideoProps = {
   loop?: boolean;
   controls?: boolean;
   muted?: boolean;
+  fillContainer?: boolean;
 };
 
 function LazyVideo({
@@ -463,6 +464,7 @@ function LazyVideo({
   loop = true,
   controls = false,
   muted = true,
+  fillContainer = true,
 }: LazyVideoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -521,7 +523,7 @@ function LazyVideo({
     <div ref={containerRef} className="project-content-image">
       <video
         ref={videoRef}
-        className="project-image project-video"
+        className={`project-image project-video ${fillContainer ? 'project-video-fill' : ''}`}
         poster={poster}
         playsInline
         muted={muted}
@@ -807,13 +809,12 @@ const projectContentData: { [key: string]: any } = {
       { type: 'paragraph', text: 'Each tape depicts the interactions between a father (the recorder), his wife, and his young daughter.' },
       { type: 'video', src: tape2Video },
       { type: 'paragraph', text: 'To evade \'The Fragment,\' the player can hide under beds and in lockers scattered throughout the facility. If the player is caught, all progress is lost as they respawn in Patient #023\'s room—where the player woke up.' },
-      { type: 'video', src: chaseVideo },
       { type: 'paragraph', text: 'The player can only see \'The Fragment\' by looking into the reflection of a handheld mirror. Otherwise, the player must rely on sound cues emitted by the entity\'s movements or actions.' },
-      { type: 'image', placeholder: 'reflection video' },
+      { type: 'video', src: chaseVideo },
       { type: 'section-title', text: 'EXHIBITION & NARRATIVE' },
       { type: 'paragraph', text: 'Saudade was publicly showcased as an interactive VR installation, presented as a standalone playable environment within a physical exhibition space. The space featured a VCR and a CRT TV, which played the VHS tapes recorded by the father.' },
       { type: 'image', src: exhibition1 },
-      { type: 'video', src: sprinting },
+      { type: 'video', src: sprinting, fillContainer: false },
     ]
   },
   // Placeholder data for other projects
@@ -1006,6 +1007,7 @@ function ProjectContent() {
                       loop={item.loop ?? true}
                       controls={item.controls ?? false}
                       muted={item.muted ?? true}
+                      fillContainer={item.fillContainer ?? true}
                     />
                   );
                 }

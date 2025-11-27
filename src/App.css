@@ -557,6 +557,10 @@
   object-fit: contain;
 }
 
+.project-video-fill {
+  object-fit: cover;
+}
+
 .video-placeholder {
   position: absolute;
   inset: 0;
