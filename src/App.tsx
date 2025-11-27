@@ -9,6 +9,9 @@ import overview23 from './assets/img/fragment-trace.jpg';
 import gameplay1 from './assets/img/gameplay1.jpg';
 import exhibition1 from './assets/img/exhibition1.jpg';
 import sprinting from './assets/vid/sprinting.mp4';
+import introVideo from './assets/vid/intro.mp4';
+import chaseVideo from './assets/vid/chase.mp4';
+import tape2Video from './assets/vid/tape2.mp4';
 
 
 // Shared Layout Component
@@ -444,6 +447,94 @@ function Contact() {
   );
 }
 
+type LazyVideoProps = {
+  src: string;
+  poster?: string;
+  autoPlay?: boolean;
+  loop?: boolean;
+  controls?: boolean;
+  muted?: boolean;
+};
+
+function LazyVideo({
+  src,
+  poster,
+  autoPlay = true,
+  loop = true,
+  controls = false,
+  muted = true,
+}: LazyVideoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hasLoadedSource = useRef(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const videoEl = videoRef.current;
+    if (!container || !videoEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!videoEl) return;
+          if (entry.isIntersecting) {
+            if (!hasLoadedSource.current) {
+              videoEl.src = src;
+              videoEl.load();
+              hasLoadedSource.current = true;
+            }
+            if (autoPlay) {
+              const playPromise = videoEl.play();
+              if (playPromise) {
+                playPromise.catch(() => {});
+              }
+            }
+          } else if (hasLoadedSource.current) {
+            videoEl.pause();
+          }
+        });
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      videoEl.pause();
+    };
+  }, [src, autoPlay]);
+
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (!videoEl) return;
+
+    const handleLoadedData = () => setIsReady(true);
+    videoEl.addEventListener('loadeddata', handleLoadedData);
+    return () => {
+      videoEl.removeEventListener('loadeddata', handleLoadedData);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="project-content-image">
+      <video
+        ref={videoRef}
+        className="project-image project-video"
+        poster={poster}
+        playsInline
+        muted={muted}
+        loop={loop}
+        controls={controls}
+        preload="none"
+        tabIndex={-1}
+      />
+      {!isReady && <div className="video-placeholder" aria-hidden="true" />}
+    </div>
+  );
+}
+
 // Image Carousel Component
 function ImageCarousel({ images }: { images: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -706,7 +797,7 @@ const projectContentData: { [key: string]: any } = {
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
       { type: 'paragraph', text: 'Saudade is a VR psychological horror experience investigating how immersion can be engineered through atmosphere, dynamic mechanics, and environmental storytelling.' },
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'video', src: introVideo, poster: overview2 },
       { type: 'paragraph', text: 'Built around a dynamic "figure of horror," the game uses heuristic-based AI to observe and dynamically react to player behavior creating a relationship defined by tension and unpredictability.' },
       { type: 'carousel', images: [overview2, overview22, overview23] },
       { type: 'paragraph', text: 'By prioritizing mood, sound, spatial disorientation, and adaptive threat over traditional jump scares, Saudade serves as an in-depth exploration of immersive game design, demonstrating how VR can heighten emotional and cognitive engagement.' },
@@ -714,9 +805,9 @@ const projectContentData: { [key: string]: any } = {
       { type: 'paragraph', text: 'To complete the game, the player must avoid \'The Fragment\' and escape Saudade Memory Rehabilitation Center. However, before escape, the player must collect and watch 3 VHS tapes. Upon collecting all 3 tapes, the player completes the game.' },
       { type: 'image', src: gameplay1 },
       { type: 'paragraph', text: 'Each tape depicts the interactions between a father (the recorder), his wife, and his young daughter.' },
-      { type: 'image', placeholder: 'tape footage video' },
+      { type: 'video', src: tape2Video },
       { type: 'paragraph', text: 'To evade \'The Fragment,\' the player can hide under beds and in lockers scattered throughout the facility. If the player is caught, all progress is lost as they respawn in Patient #023\'s room—where the player woke up.' },
-      { type: 'image', placeholder: 'hide under bed footage' },
+      { type: 'video', src: chaseVideo },
       { type: 'paragraph', text: 'The player can only see \'The Fragment\' by looking into the reflection of a handheld mirror. Otherwise, the player must rely on sound cues emitted by the entity\'s movements or actions.' },
       { type: 'image', placeholder: 'reflection video' },
       { type: 'section-title', text: 'EXHIBITION & NARRATIVE' },
@@ -905,23 +996,22 @@ function ProjectContent() {
                   </div>
                 );
               } else if (item.type === 'video') {
+                if (item.src) {
+                  return (
+                    <LazyVideo
+                      key={index}
+                      src={item.src}
+                      poster={item.poster}
+                      autoPlay={item.autoPlay ?? true}
+                      loop={item.loop ?? true}
+                      controls={item.controls ?? false}
+                      muted={item.muted ?? true}
+                    />
+                  );
+                }
                 return (
                   <div key={index} className="project-content-image">
-                    {item.src ? (
-                      <video 
-                        src={item.src} 
-                        className="project-image project-video" 
-                        autoPlay
-                        loop 
-                        muted
-                        playsInline
-                        draggable={false}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : (
-                      <span className="project-image-placeholder">{item.placeholder}</span>
-                    )}
+                    <span className="project-image-placeholder">{item.placeholder}</span>
                   </div>
                 );
               } else if (item.type === 'carousel') {
