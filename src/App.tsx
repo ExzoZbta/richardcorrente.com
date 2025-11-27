@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
@@ -447,82 +447,189 @@ function Contact() {
 // Image Carousel Component
 function ImageCarousel({ images }: { images: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [translateX, setTranslateX] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({
+    isDragging: false,
+    hasDragged: false,
+    startX: 0,
+    scrollLeft: 0,
+    startTime: 0,
+  });
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1));
-  };
+  const scrollToIndex = useCallback((index: number) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    const clamped = Math.max(0, Math.min(index, images.length - 1));
+    container.scrollTo({
+      left: clamped * container.clientWidth,
+      behavior: 'smooth'
+    });
+  }, [images.length]);
 
-  const goToPrev = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
+  const goToNext = useCallback(() => {
+    scrollToIndex(currentIndex + 1);
+  }, [currentIndex, scrollToIndex]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStartX(e.clientX);
-  };
+  const goToPrev = useCallback(() => {
+    scrollToIndex(currentIndex - 1);
+  }, [currentIndex, scrollToIndex]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    setStartX(e.touches[0].clientX);
-  };
+  useEffect(() => {
+    const container = carouselRef.current;
+    if (!container) return;
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    const diff = e.clientX - startX;
-    setTranslateX(diff);
-  };
+    const handleScroll = () => {
+      const width = container.clientWidth;
+      if (!width) return;
+      const newIndex = Math.round(container.scrollLeft / width);
+      setCurrentIndex(newIndex);
+    };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const diff = e.touches[0].clientX - startX;
-    setTranslateX(diff);
-  };
+    handleScroll();
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const handleDragEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const container = carouselRef.current;
+      if (!container) return;
 
-    // Threshold for swipe (100px)
-    if (translateX < -100) {
-      goToNext();
-    } else if (translateX > 100) {
-      goToPrev();
+      const rect = container.getBoundingClientRect();
+      const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!isInViewport) return;
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPrev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [goToNext, goToPrev]);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    
+    // Don't start drag if clicking on arrow buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('.carousel-arrow')) {
+      return;
     }
-
-    setTranslateX(0);
+    
+    const clientX = e.clientX;
+    dragState.current = {
+      isDragging: true,
+      hasDragged: false,
+      startX: clientX,
+      scrollLeft: container.scrollLeft,
+      startTime: Date.now(),
+    };
+    container.classList.add('is-dragging');
+    container.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
   };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState.current.isDragging) return;
+    const container = carouselRef.current;
+    if (!container) return;
+    
+    const diff = e.clientX - dragState.current.startX;
+    
+    // Mark as dragged if moved more than 5 pixels
+    if (Math.abs(diff) > 5) {
+      dragState.current.hasDragged = true;
+    }
+    
+    container.scrollLeft = dragState.current.scrollLeft - diff;
+    e.preventDefault();
+  };
+
+  const endDrag = (e?: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState.current.isDragging) return;
+    dragState.current.isDragging = false;
+    carouselRef.current?.classList.remove('is-dragging');
+    if (e && e.pointerId !== undefined) {
+      carouselRef.current?.releasePointerCapture?.(e.pointerId);
+    }
+  };
+
+  useEffect(() => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const handlePointerUp = (e: PointerEvent) => {
+      if (!dragState.current.isDragging) return;
+      
+      endDrag();
+      container.releasePointerCapture?.(e.pointerId);
+
+      const width = container.clientWidth;
+      if (!width) return;
+      
+      // Calculate drag distance and duration
+      const dragDistance = Math.abs(container.scrollLeft - dragState.current.scrollLeft);
+      const dragDuration = Date.now() - dragState.current.startTime;
+      const velocity = dragDistance / dragDuration; // pixels per ms
+      
+      // If drag was minimal (less than 15px), snap back to current slide
+      const MINIMUM_DRAG_THRESHOLD = 15;
+      if (dragDistance < MINIMUM_DRAG_THRESHOLD) {
+        scrollToIndex(currentIndex);
+        return;
+      }
+
+      const rawIndex = container.scrollLeft / width;
+      const fraction = rawIndex - Math.floor(rawIndex);
+      const direction = Math.sign(container.scrollLeft - dragState.current.scrollLeft);
+
+      let targetIndex = currentIndex;
+      
+      // Very forgiving thresholds based on velocity
+      const isQuickSwipe = velocity > 0.3; // Fast swipe (lowered from 0.5)
+      const threshold = isQuickSwipe ? 0.05 : 0.08; // Much lower thresholds
+      
+      if (direction > 0 && (fraction > threshold || isQuickSwipe)) {
+        targetIndex = currentIndex + 1;
+      } else if (direction < 0 && (fraction < (1 - threshold) || isQuickSwipe)) {
+        targetIndex = currentIndex - 1;
+      }
+
+      scrollToIndex(targetIndex);
+    };
+
+    container.addEventListener('pointerup', handlePointerUp);
+    container.addEventListener('pointerleave', handlePointerUp);
+    return () => {
+      container.removeEventListener('pointerup', handlePointerUp);
+      container.removeEventListener('pointerleave', handlePointerUp);
+    };
+  }, [scrollToIndex, currentIndex]);
 
   return (
-    <div 
-      className="project-carousel-container"
-      ref={carouselRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleDragEnd}
-      onMouseLeave={handleDragEnd}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleDragEnd}
-    >
+    <div className="project-carousel-shell">
       <div 
-        className="project-carousel-track"
-        style={{
-          transform: `translateX(calc(-${currentIndex * 100}% + ${translateX}px))`,
-          transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-        }}
+        className="project-carousel-container"
+        ref={carouselRef}
+        tabIndex={0}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
       >
-        {images.map((img, idx) => (
-          <div key={idx} className="project-carousel-slide">
-            <img src={img} alt={`Slide ${idx + 1}`} className="project-image" />
-          </div>
-        ))}
+        <div className="project-carousel-track">
+          {images.map((img, idx) => (
+            <div key={idx} className="project-carousel-slide">
+              <img src={img} alt={`Slide ${idx + 1}`} className="project-image" draggable={false} />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Navigation Arrows */}
       {currentIndex > 0 && (
         <button 
           className="carousel-arrow carousel-arrow-left" 
@@ -547,7 +654,6 @@ function ImageCarousel({ images }: { images: string[] }) {
         </button>
       )}
 
-      {/* Slide Counter */}
       <div className="carousel-counter">
         {currentIndex + 1} / {images.length}
       </div>
@@ -762,7 +868,7 @@ function ProjectContent() {
                 return (
                   <div key={index} className="project-content-image">
                     {item.src ? (
-                      <img src={item.src} alt={`Project content ${index}`} className="project-image" />
+                      <img src={item.src} alt={`Project content ${index}`} className="project-image" draggable={false} />
                     ) : (
                       <span className="project-image-placeholder">{item.placeholder}</span>
                     )}
@@ -779,6 +885,7 @@ function ProjectContent() {
                         loop 
                         muted
                         playsInline
+                        draggable={false}
                       >
                         Your browser does not support the video tag.
                       </video>
