@@ -12,6 +12,7 @@ import sprinting from './assets/vid/sprinting.mp4';
 import introVideo from './assets/vid/intro.mp4';
 import chaseVideo from './assets/vid/chase.mp4';
 import tape2Video from './assets/vid/tape2.mp4';
+import coverVideo from './assets/vid/cover.mp4';
 
 
 // Shared Layout Component
@@ -240,7 +241,7 @@ function Home() {
     {
       name: 'saudade',
       tags: '- VIRTUAL REALITY / EXHIBITION / THESIS -',
-      mediaPlaceholder: 'Video/GIF placeholder for saudade'
+      media: coverVideo
     },
     {
       name: "'Mode 7' game engine",
@@ -394,7 +395,18 @@ function Home() {
               {projectDetails[hoveredProject].tags}
             </div>
             <div className="project-media-placeholder">
-              {projectDetails[hoveredProject].mediaPlaceholder}
+              {projectDetails[hoveredProject].media ? (
+                <video
+                  src={projectDetails[hoveredProject].media}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="project-preview-video"
+                />
+              ) : (
+                projectDetails[hoveredProject].mediaPlaceholder
+              )}
             </div>
           </div>
         </div>
@@ -794,7 +806,7 @@ const projectContentData: { [key: string]: any } = {
     githubUrl: 'https://github.com/ExzoZbta/saudade-vr',
     projectUrl: 'https://github.com/ExzoZbta/saudade-vr',
     content: [
-      { type: 'image', placeholder: 'overview1' },
+      { type: 'video', src: coverVideo },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
