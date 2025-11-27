@@ -13,6 +13,9 @@ import introVideo from './assets/vid/intro.mp4';
 import chaseVideo from './assets/vid/chase.mp4';
 import tape2Video from './assets/vid/tape2.mp4';
 import coverVideo from './assets/vid/cover.mp4';
+import { ReactComponent as LinkedInIcon } from './assets/img/linkedin.svg';
+import { ReactComponent as GitHubIcon } from './assets/img/github.svg';
+import { ReactComponent as EmailIcon } from './assets/img/email.svg';
 
 
 // Shared Layout Component
@@ -475,7 +478,35 @@ function Contact() {
   return (
     <div className="right-panel">
       <div className="contact-container">
-        {/* contact content will go here */}
+        <div className="contact-content">
+          <a 
+            href="https://www.linkedin.com/in/richardco/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="contact-link"
+          >
+            <LinkedInIcon className="contact-icon" />
+            <span className="contact-text">linkedin.com/in/richardco</span>
+          </a>
+          
+          <a 
+            href="https://github.com/ExzoZbta" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="contact-link"
+          >
+            <GitHubIcon className="contact-icon" />
+            <span className="contact-text">github.com/ExzoZbta</span>
+          </a>
+          
+          <a 
+            href="mailto:rcorrente@aya.yale.edu"
+            className="contact-link"
+          >
+            <EmailIcon className="contact-icon" />
+            <span className="contact-text">rcorrente@aya.yale.edu</span>
+          </a>
+        </div>
       </div>
     </div>
   );
