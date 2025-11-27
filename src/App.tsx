@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate,
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
 import grainTexture from './assets/img/grain.jpg';
+import overview1 from './assets/img/overview1.jpg';
+import exhibition1 from './assets/img/exhibition1.jpg';
 
 
 // Shared Layout Component
@@ -445,11 +447,11 @@ const projectContentData: { [key: string]: any } = {
     title: 'saudade',
     date: '2024-2025',
     tools: ['Unity3D (OpenXR)', 'C#', 'Blender', 'Adobe Premiere Pro'],
-    skills: ['Game design', 'Game development'],
+    skills: ['Game design', 'Game development', 'VR'],
     githubUrl: 'https://github.com/ExzoZbta/saudade-vr',
     projectUrl: 'https://github.com/ExzoZbta/saudade-vr',
     content: [
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'image', src: overview1 },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
@@ -466,7 +468,10 @@ const projectContentData: { [key: string]: any } = {
       { type: 'paragraph', text: 'To evade \'The Fragment,\' the player can hide under beds and in lockers scattered throughout the facility. If the player is caught, all progress is lost as they respawn in Patient #023\'s room—where the player woke up.' },
       { type: 'image', placeholder: 'project image/video' },
       { type: 'paragraph', text: 'The player can only see \'The Fragment\' by looking into the reflection of a handheld mirror. Otherwise, the player must rely on sound cues emitted by the entity\'s movements or actions.' },
-      { type: 'image', placeholder: 'project image/video' }
+      { type: 'image', placeholder: 'project image/video' },
+      { type: 'section-title', text: 'EXHIBITION & NARRATIVE' },
+      { type: 'paragraph', text: 'Saudade was publicly showcased as an interactive VR installation, presented as a standalone playable environment within a physical exhibition space. The space featured a VCR and a CRT TV, which played the VHS tapes recorded by the father.' },
+      { type: 'image', src: exhibition1 },
     ]
   },
   // Placeholder data for other projects
@@ -641,7 +646,11 @@ function ProjectContent() {
               if (item.type === 'image') {
                 return (
                   <div key={index} className="project-content-image">
-                    <span className="project-image-placeholder">{item.placeholder}</span>
+                    {item.src ? (
+                      <img src={item.src} alt={`Project content ${index}`} className="project-image" />
+                    ) : (
+                      <span className="project-image-placeholder">{item.placeholder}</span>
+                    )}
                   </div>
                 );
               } else if (item.type === 'divider') {
