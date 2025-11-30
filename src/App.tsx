@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
@@ -35,18 +35,64 @@ function Layout({ children }: { children: React.ReactNode }) {
   const prevLocationRef = useRef<string>(location.pathname);
 
   // Set CORRENTE position and wait for fonts
-  useEffect(() => {
-    const initializeCorrentePosition = async () => {
-      if (richardRef.current) {
-        if (document.fonts && document.fonts.ready) {
-          await document.fonts.ready;
-        }
-        await new Promise(resolve => setTimeout(resolve, 100));
-        const richardWidth = richardRef.current.offsetWidth;
-        setCorrenteLeft(richardWidth);
+  useLayoutEffect(() => {
+    const applyNameScaling = () => {
+      if (!richardRef.current || !nameSectionRef.current || !correnteRef.current) return;
+
+      const richardEl = richardRef.current;
+      const correnteEl = correnteRef.current;
+      const nameSectionEl = nameSectionRef.current;
+
+      richardEl.style.fontSize = '';
+      correnteEl.style.fontSize = '';
+
+      const baseFontSize = parseFloat(window.getComputedStyle(richardEl).fontSize);
+      const nameSectionWidth = nameSectionEl.offsetWidth;
+      const richardWidth = richardEl.offsetWidth;
+      const correnteWidth = correnteEl.offsetWidth;
+      const totalWidth = richardWidth + correnteWidth;
+      const buffer = 0.5;
+      const availableWidth = Math.max(0, nameSectionWidth - buffer);
+
+      let scale = 1;
+      if (totalWidth > availableWidth && availableWidth > 0) {
+        scale = availableWidth / totalWidth;
       }
+
+      const appliedFontSize = scale < 0.999 ? `${baseFontSize * scale}px` : '';
+      richardEl.style.fontSize = appliedFontSize;
+      correnteEl.style.fontSize = appliedFontSize;
+
+      const finalRichardWidth = richardEl.offsetWidth;
+      setCorrenteLeft(finalRichardWidth);
     };
-    initializeCorrentePosition();
+
+    const handleWindowResize = () => {
+      requestAnimationFrame(applyNameScaling);
+    };
+
+    const initialize = async () => {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      applyNameScaling();
+    };
+
+    initialize();
+    window.addEventListener('resize', handleWindowResize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (nameSectionRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        applyNameScaling();
+      });
+      resizeObserver.observe(nameSectionRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserver?.disconnect();
+    };
   }, []);
 
   // Calculate role positions after CORRENTE is positioned
@@ -97,32 +143,60 @@ function Layout({ children }: { children: React.ReactNode }) {
         nameSectionRef.current &&
         correnteLeft > 0
       ) {
-        const nameSectionRect = nameSectionRef.current.getBoundingClientRect();
-        const richardRect = richardRef.current.getBoundingClientRect();
-        const correnteRect = correnteRef.current.getBoundingClientRect();
-        
-        const richardCenterX = richardRect.left - nameSectionRect.left + richardRect.width / 2;
-        const richardCenterY = richardRect.top - nameSectionRect.top + richardRect.height / 2;
-        
-        const correnteCenterX = correnteRect.left - nameSectionRect.left + correnteRect.width / 2;
-        const correnteCenterY = correnteRect.top - nameSectionRect.top + correnteRect.height / 2;
-        
-        const developerWidth = developerRef.current.offsetWidth;
-        setDeveloperLeft(richardCenterX - developerWidth / 2);
-        setDeveloperTop(correnteCenterY);
-        
-        const designerWidth = designerRef.current.offsetWidth;
-        setDesignerLeft(correnteCenterX - designerWidth / 2);
-        setDesignerTop(richardCenterY);
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (
+              richardRef.current && 
+              correnteRef.current && 
+              developerRef.current && 
+              designerRef.current &&
+              nameSectionRef.current
+            ) {
+              const nameSectionRect = nameSectionRef.current.getBoundingClientRect();
+              const richardRect = richardRef.current.getBoundingClientRect();
+              const correnteRect = correnteRef.current.getBoundingClientRect();
+              
+              const richardCenterX = richardRect.left - nameSectionRect.left + richardRect.width / 2;
+              const richardCenterY = richardRect.top - nameSectionRect.top + richardRect.height / 2;
+              
+              const correnteCenterX = correnteRect.left - nameSectionRect.left + correnteRect.width / 2;
+              const correnteCenterY = correnteRect.top - nameSectionRect.top + correnteRect.height / 2;
+              
+              const developerWidth = developerRef.current.offsetWidth;
+              setDeveloperLeft(richardCenterX - developerWidth / 2);
+              setDeveloperTop(correnteCenterY);
+              
+              const designerWidth = designerRef.current.offsetWidth;
+              setDesignerLeft(correnteCenterX - designerWidth / 2);
+              setDesignerTop(richardCenterY);
+            }
+          });
+        });
       }
     };
 
+    let resizeTimeout: NodeJS.Timeout;
     const handleResize = () => {
-      updatePositions();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        updatePositions();
+      }, 16); // ~60fps
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // Also listen for font loading changes
+    if (document.fonts) {
+      document.fonts.addEventListener('loadingdone', updatePositions);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+      if (document.fonts) {
+        document.fonts.removeEventListener('loadingdone', updatePositions);
+      }
+    };
   }, [correnteLeft]);
 
   const isActive = (path: string) => {
