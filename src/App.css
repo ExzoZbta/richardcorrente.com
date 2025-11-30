@@ -1,6 +1,7 @@
 :root {
   --water-sphere-size: clamp(380px, 32vw, 640px);
-  --water-sphere-center-top: calc(8rem + 150px);
+  --left-panel-height: 14rem;
+  --water-sphere-center-top: calc((100vh - var(--left-panel-height)) / 2);
   --water-sphere-center-left: calc(6.5rem + 150px);
 }
 
@@ -553,7 +554,22 @@
   }
 }
 
-/* Project Content Overlay */
+@media (min-width: 1920px) {
+  .water-sphere-container,
+  .project-details-container {
+    top: var(--water-sphere-center-top);
+    left: max(calc(6.5rem + 150px), 340px);
+  }
+}
+
+@media (min-width: 2560px) {
+  .water-sphere-container,
+  .project-details-container {
+    top: var(--water-sphere-center-top);
+    left: max(calc(6.5rem + 150px), 360px);
+  }
+}
+
 .project-overlay {
   position: fixed;
   top: 0;

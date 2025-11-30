@@ -47,6 +47,7 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "@types/three": "^0.178.1",
+    "postcss-svgo": "^7.1.0",
     "raw-loader": "^4.0.2"
   }
 }
