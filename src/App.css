@@ -3,6 +3,7 @@
   --left-panel-height: 14rem;
   --water-sphere-center-top: calc((100vh - var(--left-panel-height)) / 2);
   --water-sphere-center-left: calc(6.5rem + 150px);
+  --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-size) / 2);
 }
 
 .App {
@@ -77,6 +78,8 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  max-width: calc(var(--water-sphere-right-edge) - 2rem);
+  box-sizing: border-box;
 }
 
 .name-section {
@@ -99,7 +102,7 @@
 
 .name {
   font-family: 'Saans', sans-serif;
-  font-size: 3rem;
+  font-size: clamp(2rem, 3vw, 4.5rem);
   font-weight: 600;
   margin: 0;
   letter-spacing: -0.02em;
@@ -108,7 +111,7 @@
 
 .role {
   font-family: 'SpaceGrotesk', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 1vw, 1.5rem);
   font-weight: 300;
   color: #666;
   text-transform: lowercase;
@@ -124,7 +127,7 @@
 
 .nav-link {
   font-family: 'SpaceGrotesk', sans-serif;
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 1.25vw, 1.875rem);
   font-weight: 300;
   color: #000;
   text-decoration: none;
@@ -464,6 +467,7 @@
 
   .left-panel {
     padding: 1.5rem;
+    max-width: calc(var(--water-sphere-right-edge) - 1.5rem);
   }
 
   .right-panel {
@@ -555,18 +559,36 @@
 }
 
 @media (min-width: 1920px) {
+  :root {
+    --water-sphere-center-left: max(calc(6.5rem + 150px), 340px);
+    --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-size) / 2);
+  }
+  
   .water-sphere-container,
   .project-details-container {
     top: var(--water-sphere-center-top);
-    left: max(calc(6.5rem + 150px), 340px);
+    left: var(--water-sphere-center-left);
+  }
+  
+  .left-panel {
+    max-width: calc(var(--water-sphere-right-edge) - 2rem);
   }
 }
 
 @media (min-width: 2560px) {
+  :root {
+    --water-sphere-center-left: max(calc(6.5rem + 150px), 360px);
+    --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-size) / 2);
+  }
+  
   .water-sphere-container,
   .project-details-container {
     top: var(--water-sphere-center-top);
-    left: max(calc(6.5rem + 150px), 360px);
+    left: var(--water-sphere-center-left);
+  }
+  
+  .left-panel {
+    max-width: calc(var(--water-sphere-right-edge) - 2rem);
   }
 }
 
