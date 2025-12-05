@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate,
 import './App.css';
 import WaterSphereScene from './WaterSphereScene';
 import grainTexture from './assets/img/grain.jpg';
+
+// Saudade
 import overview2 from './assets/img/fragment-tpose.jpg';
 import overview22 from './assets/img/fragment-blender.PNG';
 import overview23 from './assets/img/fragment-trace.jpg';
@@ -13,6 +15,14 @@ import introVideo from './assets/vid/intro.mp4';
 import chaseVideo from './assets/vid/chase.mp4';
 import tape2Video from './assets/vid/tape2.mp4';
 import coverVideo from './assets/vid/cover.mp4';
+
+// 'Mode 7' game engine
+import mode7cover from './assets/vid/mode7cover.mp4';
+import gameengine1 from './assets/img/gameengine1.png';
+import gameengine2 from './assets/img/gameengine2.png';
+import mode7ui from './assets/img/mode7ui.png';
+import mode7gameplay from './assets/vid/mode7gameplay.mp4';
+
 import { ReactComponent as LinkedInIcon } from './assets/img/linkedin.svg';
 import { ReactComponent as GitHubIcon } from './assets/img/github.svg';
 import { ReactComponent as EmailIcon } from './assets/img/email.svg';
@@ -324,8 +334,8 @@ function Home() {
     },
     {
       name: "'Mode 7' game engine",
-      tags: '- PLACEHOLDER / TAGS / HERE -',
-      mediaPlaceholder: "Video/GIF placeholder for 'Mode 7' game engine"
+      tags: '- 2D+2.5D ENGINE / SYSTEMS / EDITOR TOOLING -',
+      media: mode7cover
     },
     {
       name: 'attack of the clones',
@@ -754,7 +764,6 @@ function ImageCarousel({ images }: { images: string[] }) {
     const container = carouselRef.current;
     if (!container) return;
     
-    // Don't start drag if clicking on arrow buttons
     const target = e.target as HTMLElement;
     if (target.closest('.carousel-arrow')) {
       return;
@@ -769,7 +778,6 @@ function ImageCarousel({ images }: { images: string[] }) {
       startTime: Date.now(),
       dragDirection: null,
     };
-    // Don't prevent default or capture pointer yet - wait to see drag direction
   };
 
   useEffect(() => {
@@ -782,33 +790,28 @@ function ImageCarousel({ images }: { images: string[] }) {
       const diffX = e.clientX - dragState.current.startX;
       const diffY = e.clientY - dragState.current.startY;
       
-      // Determine drag direction on first significant movement
       if (dragState.current.dragDirection === null) {
         const absX = Math.abs(diffX);
         const absY = Math.abs(diffY);
         
         // Need at least 8px of movement to determine direction
         if (absX > 8 || absY > 8) {
-          // If horizontal movement is more than 2x vertical, it's horizontal
           if (absX > absY * 2) {
             dragState.current.dragDirection = 'horizontal';
             container.classList.add('is-dragging');
-            e.preventDefault(); // Only prevent default once we know it's horizontal
+            e.preventDefault();
           } else {
-            // Otherwise treat as vertical scroll - don't interfere
             dragState.current.dragDirection = 'vertical';
             dragState.current.isDragging = false;
             return;
           }
         } else {
-          // Not enough movement yet to determine direction
           return;
         }
       }
       
       // Only handle horizontal drags
       if (dragState.current.dragDirection === 'horizontal') {
-        // Mark as dragged if moved more than 5 pixels
         if (Math.abs(diffX) > 5) {
           dragState.current.hasDragged = true;
         }
@@ -822,7 +825,6 @@ function ImageCarousel({ images }: { images: string[] }) {
     const handlePointerUp = (e: PointerEvent) => {
       if (!dragState.current.isDragging) return;
       
-      // Only process if it was a horizontal drag
       if (dragState.current.dragDirection !== 'horizontal') {
         dragState.current.isDragging = false;
         return;
@@ -834,12 +836,10 @@ function ImageCarousel({ images }: { images: string[] }) {
       const width = container.clientWidth;
       if (!width) return;
       
-      // Calculate drag distance and duration
       const dragDistance = Math.abs(container.scrollLeft - dragState.current.scrollLeft);
       const dragDuration = Date.now() - dragState.current.startTime;
-      const velocity = dragDistance / dragDuration; // pixels per ms
-      
-      // If drag was minimal (less than 15px), snap back to current slide
+      const velocity = dragDistance / dragDuration;
+   
       const MINIMUM_DRAG_THRESHOLD = 15;
       if (dragDistance < MINIMUM_DRAG_THRESHOLD) {
         scrollToIndex(currentIndex);
@@ -852,7 +852,6 @@ function ImageCarousel({ images }: { images: string[] }) {
 
       let targetIndex = currentIndex;
       
-      // Very forgiving thresholds based on velocity
       const isQuickSwipe = velocity > 0.3;
       const threshold = isQuickSwipe ? 0.05 : 0.08;
       
@@ -865,7 +864,6 @@ function ImageCarousel({ images }: { images: string[] }) {
       scrollToIndex(targetIndex);
     };
 
-    // Use document-level listeners with capture to handle pointer events globally
     document.addEventListener('pointermove', handlePointerMove, { capture: true, passive: false });
     document.addEventListener('pointerup', handlePointerUp, { capture: true });
     document.addEventListener('pointercancel', handlePointerUp, { capture: true });
@@ -960,21 +958,30 @@ const projectContentData: { [key: string]: any } = {
       { type: 'video', src: sprinting, fillContainer: false },
     ]
   },
-  // Placeholder data for other projects
   'mode-7-game-engine': {
     title: "'Mode 7' game engine",
-    date: 'TBD',
-    tools: ['Placeholder Tool'],
-    skills: ['Placeholder Skill'],
-    githubUrl: '#',
-    projectUrl: '#',
+    date: '2024',
+    tools: ['Dlang', 'Python', 'SDL2'],
+    skills: ['Engine development', 'Systems architecture', 'API design', 'UI tooling'],
+    githubUrl: 'https://github.com/ExzoZbta/cortex-crusaders',
+    projectUrl: 'https://github.com/ExzoZbta/cortex-crusaders',
     content: [
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'video', src: mode7cover },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
-      { type: 'paragraph', text: 'Project content coming soon...' },
-      { type: 'image', placeholder: 'project image/video' }
+      { type: 'paragraph', text: 'Developed with Archit Kumar and Sachin Thakrar, the Mode 7 game engine is a 2D/2.5D hybrid game engine created to explore modern engine architecture and low-level rendering techniques.' },
+      { type: 'image', src: mode7ui },
+      { type: 'paragraph', text: 'The engine features a custom renderer capable of generating psuedo-3D environments from 2D textures, supported by a full component-based framework for sprites, collisions, animation, scripting, and scene logic.' },
+      { type: 'paragraph', text: 'Backed by a modular resource manager and a hierarchical scene tree visualizer, enabling efficient object organization and real-time content manipulation.' },
+      { type: 'image', placeholder: 'insert video of editor' },
+      { type: 'paragraph', text: 'Includes an integrated Python editor that allows scenes, objects, and components to be created and modified while the game is running.' },
+      { type: 'paragraph', text: 'The engine is designed to be extensible, allowing for easy integration of new features and systems.' },
+      { type: 'paragraph', text: 'Alongside the engine, we developed a small playable demo featuring a Mode7 world, animated characters, collectible systems, procedural spawns, and bitmap-font UI.' },
+      { type: 'video', src: mode7gameplay },
+      { type: 'carousel', images: [gameengine1, gameengine2] },
+      { type: 'paragraph', text: 'The project ultimately served as a deep dive into graphics programming, engine tooling, and architectural design, teaching us the nuances of building interactive systems from the ground up.' },
+
     ]
   },
   'attack-of-the-clones': {
