@@ -361,27 +361,27 @@ function Home() {
     },
     {
       name: 'webzine',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
+      tags: '- WEB DESIGN / INTERACTIVE / UI -',
       mediaPlaceholder: 'Video/GIF placeholder for webzine'
     },
     {
       name: 'tool for one',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
+      tags: '- WEB DESIGN / INTERACTIVE / UI -',
       mediaPlaceholder: 'Video/GIF placeholder for tool for one'
     },
     {
       name: 'writings in the fog',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
+      tags: '- GRAPHIC DESIGN / BOOK / ILLUSTRATION -',
       mediaPlaceholder: 'Video/GIF placeholder for writings in the fog'
     },
     {
       name: 'fog animation',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
+      tags: '- 2D+3D MOTION GRAPHICS / ILLUSTRATION -',
       mediaPlaceholder: 'Video/GIF placeholder for fog animation'
     },
     {
       name: 'emotion synthesizer',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
+      tags: '- KINETIC SCULPTURE / MUSIC / INTERACTIVE -',
       mediaPlaceholder: 'Video/GIF placeholder for emotion synthesizer'
     },
   ];
@@ -1017,7 +1017,7 @@ const projectContentData: { [key: string]: any } = {
   },
   'webzine': {
     title: 'webzine',
-    date: 'TBD',
+    date: '2024',
     tools: ['Placeholder Tool'],
     skills: ['Placeholder Skill'],
     githubUrl: '#',
@@ -1033,7 +1033,7 @@ const projectContentData: { [key: string]: any } = {
   },
   'tool-for-one': {
     title: 'tool for one',
-    date: 'TBD',
+    date: '2024',
     tools: ['Placeholder Tool'],
     skills: ['Placeholder Skill'],
     githubUrl: '#',
@@ -1049,7 +1049,7 @@ const projectContentData: { [key: string]: any } = {
   },
   'writings-in-the-fog': {
     title: 'writings in the fog',
-    date: 'TBD',
+    date: '2025',
     tools: ['Placeholder Tool'],
     skills: ['Placeholder Skill'],
     githubUrl: '#',
@@ -1065,7 +1065,7 @@ const projectContentData: { [key: string]: any } = {
   },
   'fog-animation': {
     title: 'fog animation',
-    date: 'TBD',
+    date: '2025',
     tools: ['Placeholder Tool'],
     skills: ['Placeholder Skill'],
     githubUrl: '#',
@@ -1081,7 +1081,7 @@ const projectContentData: { [key: string]: any } = {
   },
   'emotion-synthesizer': {
     title: 'emotion synthesizer',
-    date: 'TBD',
+    date: '2023',
     tools: ['Placeholder Tool'],
     skills: ['Placeholder Skill'],
     githubUrl: '#',

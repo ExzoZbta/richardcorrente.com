@@ -6,6 +6,7 @@
   --water-sphere-center-left: calc(6.5rem + 150px);
   --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-effective-size) / 2);
   --left-panel-width: min(var(--water-sphere-right-edge), 100vw);
+  --scroll-container-max-width: calc(100vw - var(--water-sphere-right-edge) - 2rem);
 }
 
 .App {
@@ -110,10 +111,6 @@
   min-width: 0;
   overflow: hidden;
 }
-/* 
-.second-row {
-  margin-left: 0;
-} */
 
 .name {
   font-family: 'Saans', sans-serif;
@@ -208,7 +205,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
-  max-width: 600px;
+  max-width: var(--scroll-container-max-width);
   padding-bottom: 0;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -593,6 +590,7 @@
   :root {
     --water-sphere-center-left: max(calc(6.5rem + 150px), 340px);
     --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-size) / 2);
+    --scroll-container-max-width: calc(100vw - var(--water-sphere-right-edge) - 2rem);
   }
   
   .water-sphere-container,
@@ -612,6 +610,7 @@
   :root {
     --water-sphere-center-left: max(calc(6.5rem + 150px), 360px);
     --water-sphere-right-edge: calc(var(--water-sphere-center-left) + var(--water-sphere-size) / 2);
+    --scroll-container-max-width: calc(100vw - var(--water-sphere-right-edge) - 2rem);
   }
   
   .water-sphere-container,
