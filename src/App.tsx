@@ -24,6 +24,11 @@ import mode7ui from './assets/img/mode7ui.png';
 import mode7gameplay from './assets/vid/mode7gameplay.mp4';
 import mode7editor from './assets/vid/mode7editor.mp4';
 
+// Attack of the cones
+import conesdust from './assets/img/cones-dust.png';
+import conesenvironment1 from './assets/img/cones-environment1.png';
+import conesenvironment2 from './assets/img/cones-environment2.png';
+
 import { ReactComponent as LinkedInIcon } from './assets/img/linkedin.svg';
 import { ReactComponent as GitHubIcon } from './assets/img/github.svg';
 import { ReactComponent as EmailIcon } from './assets/img/email.svg';
@@ -318,7 +323,7 @@ function Home() {
   const projects = [
     'saudade',
     "'Mode 7' game engine",
-    'attack of the clones',
+    'attack of the cones',
     'webzine',
     'tool for one',
     'writings in the fog',
@@ -329,7 +334,7 @@ function Home() {
   const projectSlugs = [
     'saudade',
     'mode-7-game-engine',
-    'attack-of-the-clones',
+    'attack-of-the-cones',
     'webzine',
     'tool-for-one',
     'writings-in-the-fog',
@@ -350,9 +355,9 @@ function Home() {
       media: mode7cover
     },
     {
-      name: 'attack of the clones',
-      tags: '- PLACEHOLDER / TAGS / HERE -',
-      mediaPlaceholder: 'Video/GIF placeholder for attack of the clones'
+      name: 'attack of the cones',
+      tags: '- 3D GRAPHICS / SYSTEMS / REAL-TIME -',
+      mediaPlaceholder: 'Video/GIF placeholder for attack of the cones'
     },
     {
       name: 'webzine',
@@ -988,20 +993,26 @@ const projectContentData: { [key: string]: any } = {
 
     ]
   },
-  'attack-of-the-clones': {
-    title: 'attack of the clones',
-    date: 'TBD',
-    tools: ['Placeholder Tool'],
-    skills: ['Placeholder Skill'],
-    githubUrl: '#',
-    projectUrl: '#',
+  'attack-of-the-cones': {
+    title: 'attack of the cones',
+    date: '2025',
+    tools: ['Dlang', 'OpenGL', 'SDL2'],
+    skills: ['Real-time particles & lighting', 'Instanced rendering', 'Scene graphs'],
+    githubUrl: 'https://github.com/ExzoZbta/attack-of-the-cones',
+    projectUrl: 'https://github.com/ExzoZbta/attack-of-the-cones',
     content: [
       { type: 'image', placeholder: 'project image/video' },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
-      { type: 'paragraph', text: 'Project content coming soon...' },
-      { type: 'image', placeholder: 'project image/video' }
+      { type: 'paragraph', text: 'Developed with Archit Kumar, Attack of the Cones is a real-time 3D graphics application showcasing modern rendering pipelines and  high-performance techniques. The project implements instanced rendering to efficiently draw thousands of objects, each with unique per-instance transformations and animations. ' },
+      { type: 'paragraph', text: 'Integrates a hierarchical scene graph system to manage complex object relationships, enabling structured transformations and efficient real-time rendering.' },
+      { type: 'carousel', images: [conesenvironment1, conesenvironment2] },
+      { type: 'paragraph', text: 'A dynamic lighting system supports movable point lights, emissive cubes, and closest-point calculations for illumination effects.' },
+      { type: 'image', placeholder: 'insert video of lighting system' },
+      { type: 'paragraph', text: 'To improve environmental depth, I engineered a multi-layered particle and dust system driven by player-centered logic and variable density fields.' },
+      { type: 'image', src: conesdust },
+      { type: 'paragraph', text: 'A custom material pipeline supports diffuse, specular, and normal mapping across multiple material types under various lighting conditions.' },
     ]
   },
   'webzine': {
