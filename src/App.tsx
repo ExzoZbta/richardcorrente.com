@@ -22,6 +22,7 @@ import gameengine1 from './assets/img/gameengine1.png';
 import gameengine2 from './assets/img/gameengine2.png';
 import mode7ui from './assets/img/mode7ui.png';
 import mode7gameplay from './assets/vid/mode7gameplay.mp4';
+import mode7editor from './assets/vid/mode7editor.mp4';
 
 import { ReactComponent as LinkedInIcon } from './assets/img/linkedin.svg';
 import { ReactComponent as GitHubIcon } from './assets/img/github.svg';
@@ -92,15 +93,26 @@ function Layout({ children }: { children: React.ReactNode }) {
     window.addEventListener('resize', handleWindowResize);
 
     let resizeObserver: ResizeObserver | null = null;
+    let resizeTimeout: NodeJS.Timeout | null = null;
+    
     if (nameSectionRef.current) {
       resizeObserver = new ResizeObserver(() => {
-        applyNameScaling();
+        // Debounce the resize callback to prevent excessive recalculations
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
+        }
+        resizeTimeout = setTimeout(() => {
+          requestAnimationFrame(applyNameScaling);
+        }, 0);
       });
       resizeObserver.observe(nameSectionRef.current);
     }
 
     return () => {
       window.removeEventListener('resize', handleWindowResize);
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
       resizeObserver?.disconnect();
     };
   }, []);
@@ -974,9 +986,11 @@ const projectContentData: { [key: string]: any } = {
       { type: 'image', src: mode7ui },
       { type: 'paragraph', text: 'The engine features a custom renderer capable of generating psuedo-3D environments from 2D textures, supported by a full component-based framework for sprites, collisions, animation, scripting, and scene logic.' },
       { type: 'paragraph', text: 'Backed by a modular resource manager and a hierarchical scene tree visualizer, enabling efficient object organization and real-time content manipulation.' },
-      { type: 'image', placeholder: 'insert video of editor' },
-      { type: 'paragraph', text: 'Includes an integrated Python editor that allows scenes, objects, and components to be created and modified while the game is running.' },
+      { type: 'section-title', text: 'UI TOOLING' },
+      { type: 'video', src: mode7editor },
+      { type: 'paragraph', text: 'Equipped with a Python editor allowing for scenes, objects, and components to be created and modified while the game is running.' },
       { type: 'paragraph', text: 'The engine is designed to be extensible, allowing for easy integration of new features and systems.' },
+      { type: 'section-title', text: 'GAMEPLAY' },
       { type: 'paragraph', text: 'Alongside the engine, we developed a small playable demo featuring a Mode7 world, animated characters, collectible systems, procedural spawns, and bitmap-font UI.' },
       { type: 'video', src: mode7gameplay },
       { type: 'carousel', images: [gameengine1, gameengine2] },
