@@ -337,7 +337,7 @@ function Home() {
     'emotion-synthesizer',
   ];
 
-  // Project details data
+  // Project details with preview videos
   const projectDetails = [
     {
       name: 'saudade',
@@ -385,7 +385,6 @@ function Home() {
     const updatePadding = () => {
       if (scrollContainerRef.current) {
         const viewportHeight = window.innerHeight;
-        // Add padding equal to half viewport height so first/last items can center
         const padding = viewportHeight / 2;
         setTopPadding(padding);
         setBottomPadding(padding);
@@ -397,21 +396,18 @@ function Home() {
     return () => window.removeEventListener('resize', updatePadding);
   }, []);
 
-  // Scroll to center first item on initial load
   useEffect(() => {
     if (topPadding > 0 && scrollContainerRef.current) {
       const scrollContainer = scrollContainerRef.current;
       const firstItem = scrollContainer.querySelector('.project-item');
       
       if (firstItem) {
-        // Wait for next frame to ensure padding is applied
         requestAnimationFrame(() => {
           const containerRect = scrollContainer.getBoundingClientRect();
           const itemRect = firstItem.getBoundingClientRect();
           const containerCenter = containerRect.height / 2;
           const itemHeight = itemRect.height;
           
-          // Scroll so the first item is centered
           const scrollTarget = topPadding - containerCenter + itemHeight / 2;
           scrollContainer.scrollTop = scrollTarget;
         });
@@ -434,7 +430,6 @@ function Home() {
         const rect = item.getBoundingClientRect();
         const itemCenterY = rect.top + rect.height / 2;
         
-        // Calculate distance from center of viewport
         const distanceFromCenter = itemCenterY - centerY;
         const maxDistance = containerRect.height / 2;
         
@@ -446,7 +441,6 @@ function Home() {
       setScrollProgress(newScrollProgress);
     };
 
-    // Initial calculation
     handleScroll();
 
     scrollContainer.addEventListener('scroll', handleScroll);
@@ -461,20 +455,16 @@ function Home() {
   const getItemStyle = (index: number) => {
     const progress = scrollProgress[index] || 0;
     
-    // Calculate rotation based on progress (-90 to 90 degrees)
-    const rotateX = progress * 35; // Reduced angle for subtler effect
+    const rotateX = progress * 35;
     
     const opacity = Math.max(0, 1 - Math.abs(progress) * 0.7);
     
-    // Calculate scale (slightly smaller at edges)
     const scale = 1 - Math.abs(progress) * 0.15;
     
     const translateZ = -Math.abs(progress) * 80;
     
-    // diagonal movement
     const translateX = progress * -30;
 
-    // Force full opacity when hovering to prevent gradient from disappearing
     const finalOpacity = hoveredProject === index ? 1 : opacity;
 
     return {
