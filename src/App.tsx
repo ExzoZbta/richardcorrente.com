@@ -25,9 +25,11 @@ import mode7gameplay from './assets/vid/mode7gameplay.mp4';
 import mode7editor from './assets/vid/mode7editor.mp4';
 
 // Attack of the cones
+import conescover from './assets/vid/conescover.mp4';
 import conesdust from './assets/img/cones-dust.png';
 import conesenvironment1 from './assets/img/cones-environment1.png';
 import conesenvironment2 from './assets/img/cones-environment2.png';
+import coneslighting from './assets/vid/coneslighting.mp4';
 
 import { ReactComponent as LinkedInIcon } from './assets/img/linkedin.svg';
 import { ReactComponent as GitHubIcon } from './assets/img/github.svg';
@@ -357,7 +359,7 @@ function Home() {
     {
       name: 'attack of the cones',
       tags: '- 3D GRAPHICS / SYSTEMS / REAL-TIME -',
-      mediaPlaceholder: 'Video/GIF placeholder for attack of the cones'
+      media: conescover
     },
     {
       name: 'webzine',
@@ -998,7 +1000,7 @@ const projectContentData: { [key: string]: any } = {
     skills: ['Real-time particles & lighting', 'Instanced rendering', 'Scene graphs'],
     projectUrl: 'https://github.com/ExzoZbta/attack-of-the-cones',
     content: [
-      { type: 'image', placeholder: 'project image/video' },
+      { type: 'video', src: conescover },
       { type: 'divider' },
       { type: 'tools-skills' },
       { type: 'section-title', text: 'OVERVIEW' },
@@ -1006,7 +1008,7 @@ const projectContentData: { [key: string]: any } = {
       { type: 'paragraph', text: 'Integrates a hierarchical scene graph system to manage complex object relationships, enabling structured transformations and efficient real-time rendering.' },
       { type: 'carousel', images: [conesenvironment1, conesenvironment2] },
       { type: 'paragraph', text: 'A dynamic lighting system supports movable point lights, emissive cubes, and closest-point calculations for illumination effects.' },
-      { type: 'image', placeholder: 'insert video of lighting system' },
+      { type: 'video', src: coneslighting },
       { type: 'paragraph', text: 'To improve environmental depth, I engineered a multi-layered particle and dust system driven by player-centered logic and variable density fields.' },
       { type: 'image', src: conesdust },
       { type: 'paragraph', text: 'A custom material pipeline supports diffuse, specular, and normal mapping across multiple material types under various lighting conditions.' },
