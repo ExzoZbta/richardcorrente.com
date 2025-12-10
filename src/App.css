@@ -1004,6 +1004,13 @@
   white-space: nowrap;
 }
 
+.project-visit {
+  font-family: 'Saans-TRIAL-Regular', sans-serif;
+  font-size: 1rem;
+  color: #000;
+  white-space: nowrap;
+}
+
 .project-github-link svg {
   flex-shrink: 0;
 }
