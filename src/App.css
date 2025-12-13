@@ -235,7 +235,7 @@
   font-family: 'Saans', sans-serif;
   font-size: 6rem;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: #000;
   text-transform: lowercase;
@@ -243,6 +243,7 @@
   transition: transform 0.3s ease-out, opacity 0.3s ease-out, all 0.3s ease;
   text-align: right;
   width: 100%;
+  padding-bottom: 0.1em;
   transform-style: preserve-3d;
   will-change: transform, opacity;
   pointer-events: auto;
